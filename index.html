@@ -2032,85 +2032,47 @@
             }
         }
 
-        
-        // --- Reports must always use the latest persisted grades (not the currently rendered History list) ---
-        
-        function escapeHtml(str){
-            return String(str)
-              .replace(/&/g,"&amp;")
-              .replace(/</g,"&lt;")
-              .replace(/>/g,"&gt;")
-              .replace(/"/g,"&quot;")
-              .replace(/'/g,"&#039;");
+        function showReports() {
+            showView('reports');
         }
 
-function getGradesForReports() {
-            let g = [];
-            try { g = JSON.parse(localStorage.getItem('bizou_grades') || '[]'); } catch (e) { g = []; }
-            if (!Array.isArray(g)) g = [];
-            // Prefer the larger set (guards against stale in-memory state on mobile)
-            try {
-                if (Array.ifunction renderHistory() {
-    // Always show full history from persisted storage.
-    const allGrades = getGradesForReports();
-    const tbody = document.getElementById("history-list");
-    if (!tbody) return;
+        // ============== HISTORY ==============
+        function renderHistory() {
+            const container = document.getElementById('history-list');
+            const filter = document.getElementById('history-class-filter').value;
+            
+            let filteredGrades = filter 
+                ? grades.filter(g => g.classId === filter)
+                : grades;
 
-    // Sort newest first (by timestamp/date if present)
-    const sortedAll = [...allGrades].sort((a,b) => {
-        const da = new Date(a.timestamp || a.createdAt || a.date || a.examDate || 0).getTime();
-        const db = new Date(b.timestamp || b.createdAt || b.date || b.examDate || 0).getTime();
-        return db - da;
-    });
+            // If history is configured to be cleared after sync, hide synced entries
+            const hideSynced = (localStorage.getItem('bizou_hide_synced_history') === '1');
+            if (hideSynced) {
+                filteredGrades = filteredGrades.filter(g => !g.synced);
+            }
 
-    
+            if (filteredGrades.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📋</div>
+                        <div class="empty-text">Δεν βρέθηκαν βαθμολογήσεις</div>
+                    </div>
+                `;
+                return;
+            }
 
-    // Apply History filter (purely visual; does not affect reports)
-    const filterEl = document.getElementById("historyFilter");
-    const mode = (filterEl && filterEl.value) ? filterEl.value : "all";
-
-    const sorted = sortedAll.filter(g => {
-        if (mode === "pending") return g.synced !== true;
-        if (mode === "synced") return g.synced === true;
-        return true;
-    });
-
-tbody.innerHTML = "";
-
-    if (sorted.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="999" style="text-align:center; padding:12px;">Δεν υπάρχουν εγγραφές.</td></tr>`;
-        return;
-    }
-
-    sorted.forEach((g) => {
-        const tr = document.createElement("tr");
-
-        // Defensive field access (keep existing columns compatible)
-        const cls = g.className || g.class || g.class_id || g.classId || "";
-        const student = g.studentName || g.student || g.name || "";
-        const reg = g.studentRegNo || g.regNo || g.registration || g.studentId || "";
-        const subject = g.subject || g.lesson || "";
-        const grade = (g.grade ?? g.score ?? "");
-        const max = (g.max ?? g.maxScore ?? "");
-        const notes = g.notes || g.comment || "";
-
-        // Sync indicator (does not affect any logic)
-        const syncTag = (g.synced === true) ? "✓" : "⏳";
-
-        tr.innerHTML = `
-            <td>${escapeHtml(String(cls))}</td>
-            <td>${escapeHtml(String(student))}</td>
-            <td>${escapeHtml(String(reg))}</td>
-            <td>${escapeHtml(String(subject))}</td>
-            <td>${escapeHtml(String(grade))}</td>
-            <td>${escapeHtml(String(max))}</td>
-            <td>${escapeHtml(String(notes))}</td>
-            <td style="text-align:center;">${syncTag}</td>
-        `;
-
-        tbody.appendChild(tr);
-    });
-}ck="editGrade(${g.id})" title="Επεξεργασία">✏️</button>
+            container.innerHTML = filteredGrades.map(g => {
+                const scaleLabel = g.scale === 100 ? '/100' : '/20';
+                return `
+                <div class="grade-item" data-id="${g.id}">
+                    <div class="grade-score-badge">${g.score}<span style="font-size:10px;opacity:0.8">${scaleLabel}</span></div>
+                    <div class="grade-details">
+                        <div class="grade-student">${g.studentName}</div>
+                        <div class="grade-meta">${g.className}<br>${g.subject} • ${g.category} • ${formatDate(g.date)}</div>
+                        ${g.notes ? `<div class="grade-meta" style="margin-top:4px;font-style:italic;">"${g.notes.substring(0,50)}${g.notes.length > 50 ? '...' : ''}"</div>` : ''}
+                    </div>
+                    <div class="grade-actions">
+                        <button class="action-btn edit-btn" onclick="editGrade(${g.id})" title="Επεξεργασία">✏️</button>
                         <button class="action-btn delete-btn" onclick="deleteGrade(${g.id})" title="Διαγραφή">🗑️</button>
                     </div>
                 </div>
@@ -2525,11 +2487,9 @@ tbody.innerHTML = "";
                 return;
             }
 
-            
-            const reportGrades = getGradesForReports();
-const student = students.find(s => s.regNo === studentRegNo && s.classId === classId);
+            const student = students.find(s => s.regNo === studentRegNo && s.classId === classId);
             const className = classes.find(c => c.id === classId)?.name;
-            const studentGrades = reportGrades.filter(g => g.studentRegNo === studentRegNo && g.classId === classId);
+            const studentGrades = grades.filter(g => g.studentRegNo === studentRegNo && g.classId === classId);
             const finalKey = `${classId}_${studentRegNo}`;
 
             const calcAvg = (arr) => {
@@ -2729,12 +2689,10 @@ const student = students.find(s => s.regNo === studentRegNo && s.classId === cla
                 return;
             }
 
-            
-            const reportGrades = getGradesForReports();
-const student = students.find(s => s.regNo === studentRegNo && s.classId === classId);
+            const student = students.find(s => s.regNo === studentRegNo && s.classId === classId);
             const className = classes.find(c => c.id === classId)?.name;
-            const studentGrades = reportGrades.filter(g => g.studentRegNo === studentRegNo && g.classId === classId);
-            const allClassGrades = reportGrades.filter(g => g.classId === classId);
+            const studentGrades = grades.filter(g => g.studentRegNo === studentRegNo && g.classId === classId);
+            const allClassGrades = grades.filter(g => g.classId === classId);
             const finalKey = `${classId}_${studentRegNo}`;
             
             // Helper function
@@ -2930,14 +2888,12 @@ const student = students.find(s => s.regNo === studentRegNo && s.classId === cla
                 return;
             }
 
-            
-            const reportGrades = getGradesForReports();
-const className = classes.find(c => c.id === classId)?.name;
+            const className = classes.find(c => c.id === classId)?.name;
             const classStudents = students
                 .filter(s => s.classId === classId)
                 .sort((a, b) => a.name.localeCompare(b.name, 'el'));
             
-            const allClassGrades = reportGrades.filter(g => g.classId === classId);
+            const allClassGrades = grades.filter(g => g.classId === classId);
 
             const calcAvg = (arr) => {
                 if (arr.length === 0) return '-';
@@ -2962,7 +2918,7 @@ const className = classes.find(c => c.id === classId)?.name;
 
             // Calculate stats for each student by period
             const studentStats = classStudents.map(student => {
-                const studentGrades = reportGrades.filter(g => g.studentRegNo === student.regNo && g.classId === classId);
+                const studentGrades = grades.filter(g => g.studentRegNo === student.regNo && g.classId === classId);
                 const finalKey = `${classId}_${student.regNo}`;
                 
                 const trimesterGrades = studentGrades.filter(g => {
@@ -3108,16 +3064,14 @@ const className = classes.find(c => c.id === classId)?.name;
                 return;
             }
 
-            
-            const reportGrades = getGradesForReports();
-const className = classes.find(c => c.id === classId)?.name;
+            const className = classes.find(c => c.id === classId)?.name;
             const classStudents = students
                 .filter(s => s.classId === classId)
                 .sort((a, b) => a.name.localeCompare(b.name, 'el'));
 
             // Get grades for each student
             const gridData = classStudents.map(student => {
-                const studentGrades = reportGrades.filter(g => 
+                const studentGrades = grades.filter(g => 
                     g.studentRegNo === student.regNo && 
                     g.classId === classId &&
                     (!subject || g.subject === subject)
@@ -3440,13 +3394,6 @@ async function flushGoogleSyncQueue() {
         }
 
         window.addEventListener('load', () => {
-  // Re-render history when filter changes
-  document.addEventListener("change", function(e){
-    if (e && e.target && e.target.id === "historyFilter") {
-      try { renderHistory(); } catch(_) {}
-    }
-  });
-
             flushGoogleSyncQueue();
         });
         window.addEventListener('online', () => {
@@ -3454,14 +3401,13 @@ async function flushGoogleSyncQueue() {
         });
 
         function createPeriodReport() {
-            const reportGrades = getGradesForReports();
             const period = document.getElementById('report-period').value;
             const periodNames = { '1': 'Α΄ Τρίμηνο', '2': 'Β΄ Τετράμηνο' };
             const periodName = periodNames[period];
 
             // Filter grades by period date range
             const periodDates = periods.find(p => p.id === period);
-            const periodGrades = reportGrades.filter(g => {
+            const periodGrades = grades.filter(g => {
                 const gDate = new Date(g.date);
                 return gDate >= new Date(periodDates.start) && gDate <= new Date(periodDates.end);
             });
