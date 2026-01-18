@@ -1547,6 +1547,9 @@
 
         // Grades storage (localStorage)
         let grades = JSON.parse(localStorage.getItem('bizou_grades') || '[]');
+        // Normalize (older records may not have the new fields)
+        grades = (Array.isArray(grades) ? grades : []).map(g => ({...g, synced: (g && typeof g.synced === 'boolean') ? g.synced : false}));
+        try { localStorage.setItem('bizou_grades', JSON.stringify(grades)); } catch(e) {}
 
         // ============== INITIALIZATION ==============
         document.addEventListener('DOMContentLoaded', () => {
@@ -1821,7 +1824,8 @@
                 score,
                 scale, // Store which scale was used
                 notes,
-                date: gradeDate.toISOString()
+                date: gradeDate.toISOString(),
+                synced: false
             };
 
             grades.unshift(grade);
@@ -2014,6 +2018,12 @@
             let filteredGrades = filter 
                 ? grades.filter(g => g.classId === filter)
                 : grades;
+
+            // If history is configured to be cleared after sync, hide synced entries
+            const hideSynced = (localStorage.getItem('bizou_hide_synced_history') === '1');
+            if (hideSynced) {
+                filteredGrades = filteredGrades.filter(g => !g.synced);
+            }
 
             if (filteredGrades.length === 0) {
                 container.innerHTML = `
@@ -3271,7 +3281,20 @@
             }
         }
 
-        async function flushGoogleSyncQueue() {
+        
+        function markGradeSynced_(id) {
+            try {
+                const idx = grades.findIndex(g => String(g.id) === String(id));
+                if (idx === -1) return;
+                grades[idx].synced = true;
+                grades[idx].syncedAt = new Date().toISOString();
+                localStorage.setItem('bizou_grades', JSON.stringify(grades));
+            } catch (e) {
+                // no-op
+            }
+        }
+
+async function flushGoogleSyncQueue() {
             // Best-effort: never block UI / saving flow
             if (!navigator.onLine) return;
 
@@ -3293,6 +3316,7 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(item)
                     });
+                    if (item && item.id) { markGradeSynced_(item.id); }
                     // no-cors: response is opaque; assume success if no exception
                 } catch (e) {
                     remaining.push(item);
@@ -3303,7 +3327,7 @@
 
             // Hybrid: if everything pending is flushed, clear local history to prevent stale "Ιστορικό" on mobile
             if (HYBRID_CLEAR_LOCAL_ON_FULL_SYNC && remaining.length === 0) {
-                try { localStorage.removeItem(LOCAL_GRADES_KEY); } catch(e) {}
+                try { localStorage.setItem('bizou_hide_synced_history','1'); } catch(e) {}
             }
         }
 
