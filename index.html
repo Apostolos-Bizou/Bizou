@@ -1027,7 +1027,7 @@
 <script>
 (function() {
   const PIN = "4775";
-  const KEY = "bizou_pin_ok";
+  const KEY = "bizou_pin_ok_4775";
 
   if (localStorage.getItem(KEY) !== "1") {
     const entered = prompt("Κωδικός πρόσβασης:");
@@ -3255,33 +3255,6 @@
         const GOOGLE_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbw9BhMnLNwqbse78oEwSKyXDF8BntvphuGbvHJmNdwwtudtsigw6IcLPdhBUZf8VndL9A/exec';
         const GOOGLE_SYNC_QUEUE_KEY = 'google_sync_queue_v1';
         const GOOGLE_SYNC_TOKEN = 'tok_Dwhnci7Rx7kDgf24yVOLhE3YACHccNmd6Ejpb0e_5Mw';
-
-// -------------------------------------------------
-// FRONTEND ACCESS LOCK (no UI changes): one-time PIN via browser prompt
-// -------------------------------------------------
-// Change ACCESS_PIN below to something only you know.
-// If you leave it as-is, anyone with the file can open it.
-const ACCESS_PIN = '1234';
-(function enforceAccessPin(){
-  try {
-    const ok = localStorage.getItem('bizou_access_ok');
-    if (ok === '1') return;
-    const entered = prompt('PIN πρόσβασης:');
-    if (entered === ACCESS_PIN) {
-      localStorage.setItem('bizou_access_ok','1');
-      return;
-    }
-    alert('Μη εξουσιοδοτημένη πρόσβαση.');
-    // Stop the app from running further
-    throw new Error('ACCESS_DENIED');
-  } catch (e) {
-    // If localStorage is blocked, still enforce
-    if (String(e && e.message) === 'ACCESS_DENIED') {
-      document.documentElement.innerHTML = '';
-    }
-  }
-})();
-
 
         function getGoogleEndpointUrl() {
             const sep = GOOGLE_WEBAPP_URL.includes('?') ? '&' : '?';
