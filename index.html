@@ -1025,19 +1025,45 @@
 <body>
 
 <script>
-(function() {
+(function () {
+  // --- Frontend PIN lock (locks again when you leave / background the app) ---
   const PIN = "4775";
-  const KEY = "bizou_pin_ok_4775";
+  const KEY = "bizou_pin_session_ok"; // session-only
 
-  if (localStorage.getItem(KEY) !== "1") {
-    const entered = prompt("Κωδικός πρόσβασης:");
-    if (entered !== PIN) {
-      alert("Λάθος κωδικός");
-      document.body.innerHTML = "";
-      return;
-    }
-    localStorage.setItem(KEY, "1");
+  function deny(msg) {
+    try { alert(msg); } catch (e) {}
+    document.documentElement.innerHTML = "";
+    throw new Error(msg);
   }
+
+  // If already unlocked for this browser session/tab, do nothing.
+  if (sessionStorage.getItem(KEY) === "1") return;
+
+  const entered = prompt("Κωδικός πρόσβασης:");
+  if (entered === null) {
+    // Cancel must NOT allow access.
+    deny("Ακύρωση — δεν επιτρέπεται πρόσβαση.");
+  }
+
+  if (String(entered).trim() !== String(PIN).trim()) {
+    deny("Λάθος κωδικός.");
+  }
+
+  sessionStorage.setItem(KEY, "1");
+
+  // Lock again when the page is being hidden/closed (practical 'exit' for mobile)
+  function relock() {
+    try { sessionStorage.removeItem(KEY); } catch (e) {}
+  }
+
+  // When the tab/app is backgrounded
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) relock();
+  });
+
+  // When navigating away / closing / reload
+  window.addEventListener("pagehide", relock);
+  window.addEventListener("beforeunload", relock);
 })();
 </script>
 
