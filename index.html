@@ -1,0 +1,3948 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Βαθμολόγιο">
+    <meta name="theme-color" content="#5B2C83">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Βαθμολόγιο">
+    <title>Βαθμολόγιο - Μπίζου</title>
+    
+    <!-- PWA Manifest - Inline -->
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIs6SzrHOuM68zr/Ou8+MzrPOuc6/IC0gzpzPgM6vzrbOv8+FIiwKICAic2hvcnRfbmFtZSI6ICLOks6xzrjOvM6/zrvPjM6zzrnOvyIsCiAgImRlc2NyaXB0aW9uIjogIs6Vzr/Osc+BzrzOv8+DzrHOuc+Bzq3Pgg0gzrLOsc64zrzOv867z4zOs863z4POtyIsCiAgInN0YXJ0X3VybCI6ICIuIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjRkFGQUZDIiwKICAidGhlbWVfY29sb3IiOiAiIzVCMkM4MyIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbCw8c3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgdmlld0JveD0nMCAwIDE5MiAxOTInPjxyZWN0IHdpZHRoPScxOTInIGhlaWdodD0nMTkyJyBmaWxsPSclMjM1QjJDODMnIHJ4PScyNCcvPjx0ZXh0IHg9Jzk2JyB5PScxMjAnIGZvbnQtc2l6ZT0nOTAnIHRleHQtYW5jaG9yPSdtaWRkbGUnIGZpbGw9J3doaXRlJz7inI88L3RleHQ+PC9zdmc+IiwKICAgICAgInNpemVzIjogIjE5MngxOTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9zdmcreG1sIiwKICAgICAgInB1cnBvc2UiOiAiYW55IG1hc2thYmxlIgogICAgfQogIF0KfQ==">
+    
+    <!-- Apple Touch Icon -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' fill='%235B2C83' rx='40'/><text x='90' y='115' font-size='80' text-anchor='middle' fill='white'>✏️</text></svg>">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #5B2C83;
+            --primary-light: #7B4CA3;
+            --primary-dark: #3D1D57;
+            --primary-gradient: linear-gradient(135deg, #7B4CA3 0%, #5B2C83 50%, #3D1D57 100%);
+            --accent: #E8D5F2;
+            --accent-light: #F5EEF9;
+            --success: #2ECC71;
+            --warning: #F39C12;
+            --danger: #E74C3C;
+            --text-primary: #1A1A2E;
+            --text-secondary: #6B7280;
+            --text-light: #9CA3AF;
+            --bg-main: #FAFAFC;
+            --bg-card: #FFFFFF;
+            --shadow-sm: 0 2px 8px rgba(91, 44, 131, 0.08);
+            --shadow-md: 0 4px 20px rgba(91, 44, 131, 0.12);
+            --shadow-lg: 0 8px 40px rgba(91, 44, 131, 0.16);
+            --radius-sm: 12px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --radius-full: 50px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-primary);
+            min-height: 100vh;
+            min-height: 100dvh;
+            overflow-x: hidden;
+        }
+
+        /* App Container */
+        .app-container {
+            max-width: 100%;
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Header */
+        .app-header {
+            background: var(--primary-gradient);
+            padding: 16px 20px;
+            padding-top: calc(16px + env(safe-area-inset-top));
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-md);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .app-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: rgba(255,255,255,0.2);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .app-title {
+            color: white;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .app-subtitle {
+            color: rgba(255,255,255,0.8);
+            font-size: 12px;
+            font-weight: 400;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .header-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-sm);
+            background: rgba(255,255,255,0.15);
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .header-btn:active {
+            transform: scale(0.95);
+            background: rgba(255,255,255,0.25);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            padding-bottom: calc(100px + env(safe-area-inset-bottom));
+        }
+
+        /* Quick Stats */
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 16px 12px;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease;
+        }
+
+        .stat-card:active {
+            transform: scale(0.98);
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 6px;
+            font-weight: 500;
+        }
+
+        /* Section Title */
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            padding-left: 4px;
+        }
+
+        /* Form Card */
+        .form-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 20px;
+        }
+
+        /* Dropdown Select */
+        .select-group {
+            margin-bottom: 16px;
+        }
+
+        .select-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .select-wrapper {
+            position: relative;
+        }
+
+        .custom-select {
+            width: 100%;
+            padding: 14px 44px 14px 16px;
+            font-size: 16px;
+            font-family: inherit;
+            font-weight: 500;
+            color: var(--text-primary);
+            background: var(--accent-light);
+            border: 2px solid transparent;
+            border-radius: var(--radius-md);
+            appearance: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .custom-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(91, 44, 131, 0.1);
+        }
+
+        .select-arrow {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        .date-input {
+            width: 100%;
+            color-scheme: light;
+        }
+
+        .date-input::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            opacity: 0.6;
+        }
+
+        /* Score Input */
+        .score-section {
+            background: var(--accent-light);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        /* Scale Toggle */
+        .scale-toggle {
+            display: flex;
+            gap: 12px;
+        }
+
+        .scale-btn {
+            flex: 1;
+            padding: 14px;
+            border-radius: var(--radius-md);
+            border: 2px solid var(--accent);
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .scale-btn .scale-number {
+            display: block;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .scale-btn .scale-desc {
+            display: block;
+            font-size: 11px;
+            color: var(--text-light);
+            margin-top: 2px;
+        }
+
+        .scale-btn.active {
+            border-color: var(--primary);
+            background: var(--accent-light);
+        }
+
+        .scale-btn.active .scale-number {
+            color: var(--primary);
+        }
+
+        .scale-btn:active {
+            transform: scale(0.98);
+        }
+
+        .score-display {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .score-value {
+            font-size: 64px;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        .score-max {
+            font-size: 24px;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .score-slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: var(--accent);
+            appearance: none;
+            cursor: pointer;
+            margin-bottom: 12px;
+        }
+
+        .score-slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            box-shadow: var(--shadow-md);
+            cursor: pointer;
+        }
+
+        .quick-scores {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .quick-score-btn {
+            padding: 8px 16px;
+            border-radius: var(--radius-full);
+            border: 2px solid var(--accent);
+            background: white;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .quick-score-btn:active,
+        .quick-score-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        /* Notes Textarea */
+        .notes-group {
+            margin-bottom: 16px;
+        }
+
+        .notes-textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 14px 16px;
+            font-size: 16px;
+            font-family: inherit;
+            color: var(--text-primary);
+            background: var(--accent-light);
+            border: 2px solid transparent;
+            border-radius: var(--radius-md);
+            resize: vertical;
+            transition: all 0.2s ease;
+        }
+
+        .notes-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(91, 44, 131, 0.1);
+        }
+
+        .notes-textarea::placeholder {
+            color: var(--text-light);
+        }
+
+        /* Phrase Chips */
+        .phrase-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .phrase-chip {
+            padding: 8px 14px;
+            border-radius: var(--radius-full);
+            background: white;
+            border: 1px solid var(--accent);
+            font-size: 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .phrase-chip:active {
+            background: var(--accent);
+            border-color: var(--primary-light);
+            color: var(--primary);
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            border-radius: var(--radius-md);
+            background: var(--primary-gradient);
+            border: none;
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            box-shadow: var(--shadow-md);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .submit-btn:active {
+            transform: scale(0.98);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Selected Student Banner */
+        .selected-student-banner {
+            position: fixed;
+            bottom: 80px;
+            left: 0;
+            right: 0;
+            background: var(--primary-gradient);
+            padding: 12px 20px;
+            text-align: center;
+            z-index: 99;
+            transform: translateY(100%);
+            opacity: 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 -4px 20px rgba(91, 44, 131, 0.3);
+        }
+
+        .selected-student-banner.visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .selected-student-name {
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .selected-student-class {
+            color: rgba(255,255,255,0.8);
+            font-size: 12px;
+            margin-top: 2px;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            padding: 12px 20px;
+            padding-bottom: calc(12px + env(safe-area-inset-bottom));
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-around;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 16px;
+            border-radius: var(--radius-md);
+            background: transparent;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+            background: var(--accent-light);
+        }
+
+        .nav-icon {
+            font-size: 24px;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 200;
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            width: 100%;
+            max-height: 85vh;
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            padding: 24px 20px;
+            padding-bottom: calc(24px + env(safe-area-inset-bottom));
+            animation: slideUp 0.3s ease;
+            overflow-y: auto;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-handle {
+            width: 40px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 2px;
+            margin: 0 auto 20px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* Grade History List */
+        .grade-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .grade-item {
+            background: var(--accent-light);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .grade-score-badge {
+            width: 56px;
+            height: 56px;
+            border-radius: var(--radius-sm);
+            background: var(--primary-gradient);
+            color: white;
+            font-size: 22px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .grade-details {
+            flex: 1;
+        }
+
+        .grade-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-left: 10px;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .edit-btn {
+            background: #E8F4FD;
+        }
+
+        .edit-btn:active {
+            background: #B8DCFA;
+        }
+
+        .delete-btn {
+            background: #FDEEEE;
+        }
+
+        .delete-btn:active {
+            background: #FABDBD;
+        }
+
+        /* Student Card Styles */
+        .student-card-header {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 15px;
+            border-radius: var(--radius-md);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .student-card-name {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .student-card-class {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .subject-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            margin-bottom: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .subject-header {
+            background: var(--accent-light);
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .subject-name {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .subject-avg {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .subject-grades {
+            padding: 10px 15px;
+        }
+
+        .category-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .category-row:last-child {
+            border-bottom: none;
+        }
+
+        .category-name {
+            font-size: 12px;
+            color: var(--text-secondary);
+            flex: 1;
+        }
+
+        .category-grades {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .grade-chip {
+            background: var(--accent-light);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+        }
+
+        .grade-chip-score {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .grade-chip-date {
+            color: var(--text-light);
+            font-size: 9px;
+        }
+
+        .final-grade-row {
+            background: var(--accent-light);
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .final-grade-label {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .final-grade-input {
+            width: 70px;
+            padding: 8px;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            text-align: center;
+            color: var(--primary);
+        }
+
+        .final-grade-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(91, 44, 131, 0.2);
+        }
+
+        .save-finals-btn {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+
+        .save-finals-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Period Sections */
+        .period-section {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .period-section:last-of-type {
+            border-bottom: none;
+        }
+
+        .period-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background: #f8f5fc;
+        }
+
+        .period-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 0.5px;
+        }
+
+        .period-avg {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .period-grades {
+            padding: 8px 15px;
+        }
+
+        .grades-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .no-grades-text {
+            text-align: center;
+            color: #ccc;
+            font-size: 11px;
+            padding: 8px;
+        }
+
+        .period-final {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background: #faf8fc;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .final-grade-input.small {
+            width: 60px;
+            padding: 6px;
+            font-size: 14px;
+        }
+
+        /* Exam Section */
+        .exam-section {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%);
+        }
+
+        .exam-header {
+            background: transparent !important;
+        }
+
+        .exam-score {
+            font-size: 20px;
+            font-weight: 700;
+            color: #856404;
+        }
+
+        /* Year Final Section */
+        .year-final-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: var(--primary-gradient);
+        }
+
+        .year-final-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: white;
+            letter-spacing: 0.5px;
+        }
+
+        .final-grade-input.large {
+            width: 80px;
+            padding: 10px;
+            font-size: 18px;
+            background: white;
+        }
+
+        .grade-student {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .grade-meta {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Reports View */
+        .report-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .report-btn {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px;
+            background: var(--accent-light);
+            border: 2px solid transparent;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .report-btn:active {
+            border-color: var(--primary);
+            background: white;
+        }
+
+        .report-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-sm);
+            background: var(--primary-gradient);
+            color: white;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .report-info h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .report-info p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--primary-dark);
+            color: white;
+            padding: 14px 24px;
+            border-radius: var(--radius-full);
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: var(--shadow-lg);
+            z-index: 300;
+            pointer-events: none;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* View Transitions */
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-text {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+
+<script>
+(function () {
+  // --- Frontend PIN lock (locks again when you leave / background the app) ---
+  const PIN = "4775";
+  const KEY = "bizou_pin_session_ok"; // session-only
+
+  function deny(msg) {
+    try { alert(msg); } catch (e) {}
+    document.documentElement.innerHTML = "";
+    throw new Error(msg);
+  }
+
+  // If already unlocked for this browser session/tab, do nothing.
+  if (sessionStorage.getItem(KEY) === "1") return;
+
+  const entered = prompt("Κωδικός πρόσβασης:");
+  if (entered === null) {
+    // Cancel must NOT allow access.
+    deny("Ακύρωση — δεν επιτρέπεται πρόσβαση.");
+  }
+
+  if (String(entered).trim() !== String(PIN).trim()) {
+    deny("Λάθος κωδικός.");
+  }
+
+  sessionStorage.setItem(KEY, "1");
+
+  // Lock again when the page is being hidden/closed (practical 'exit' for mobile)
+  function relock() {
+    try { sessionStorage.removeItem(KEY); } catch (e) {}
+  }
+
+  // When the tab/app is backgrounded
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) relock();
+  });
+
+  // When navigating away / closing / reload
+  window.addEventListener("pagehide", relock);
+  window.addEventListener("beforeunload", relock);
+})();
+</script>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="app-logo">
+                    <div class="logo-icon">📚</div>
+                    <div>
+                        <div class="app-title">Βαθμολόγιο</div>
+                        <div class="app-subtitle">Μουσικό Σχολείο Λευκάδας</div>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="header-btn" onclick="syncToGoogleSheets()" title="Συγχρονισμός">☁️</button>
+                    <button class="header-btn" onclick="showReports()">📄</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Grading View -->
+            <div id="grading-view" class="view active">
+                <!-- Quick Stats - Dynamic -->
+                <div class="quick-stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="class-avg">-</div>
+                        <div class="stat-label">Μ.Ο. Τάξης</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="student-avg">-</div>
+                        <div class="stat-label">Μ.Ο. Μαθητή</div>
+                    </div>
+                </div>
+
+                <!-- Grading Form -->
+                <div class="form-card">
+                    <div class="section-title">Νέα Βαθμολόγηση</div>
+                    
+                    <!-- Class Select -->
+                    <div class="select-group">
+                        <label class="select-label">Τάξη</label>
+                        <div class="select-wrapper">
+                            <select class="custom-select" id="class-select" onchange="updateStudents()">
+                                <option value="">Επιλέξτε τάξη...</option>
+                            </select>
+                            <span class="select-arrow">▼</span>
+                        </div>
+                    </div>
+
+                    <!-- Student Select -->
+                    <div class="select-group">
+                        <label class="select-label">Μαθητής/τρια</label>
+                        <div class="select-wrapper">
+                            <select class="custom-select" id="student-select" disabled onchange="updateStudentBanner()">
+                                <option value="">Επιλέξτε πρώτα τάξη...</option>
+                            </select>
+                            <span class="select-arrow">▼</span>
+                        </div>
+                    </div>
+
+                    <!-- Subject Select -->
+                    <div class="select-group">
+                        <label class="select-label">Μάθημα</label>
+                        <div class="select-wrapper">
+                            <select class="custom-select" id="subject-select" onchange="updateLiveStats()">
+                                <option value="">Επιλέξτε μάθημα...</option>
+                            </select>
+                            <span class="select-arrow">▼</span>
+                        </div>
+                    </div>
+
+                    <!-- Category Select -->
+                    <div class="select-group">
+                        <label class="select-label">Κατηγορία Αξιολόγησης</label>
+                        <div class="select-wrapper">
+                            <select class="custom-select" id="category-select" onchange="updateLiveStats()">
+                                <option value="">Επιλέξτε κατηγορία...</option>
+                            </select>
+                            <span class="select-arrow">▼</span>
+                        </div>
+                    </div>
+
+                    <!-- Date Picker -->
+                    <div class="select-group">
+                        <label class="select-label">Ημερομηνία Αξιολόγησης</label>
+                        <input type="date" class="custom-select date-input" id="grade-date" style="padding-right: 15px;">
+                    </div>
+
+                    <!-- Scale Selection (Only for Lyceum) -->
+                    <div class="select-group" id="scale-selection" style="display: none;">
+                        <label class="select-label">Κλίμακα Βαθμολόγησης</label>
+                        <div class="scale-toggle">
+                            <button class="scale-btn active" id="scale-20-btn" onclick="setScale(20)">
+                                <span class="scale-number">0-20</span>
+                                <span class="scale-desc">Εικοσαβάθμια</span>
+                            </button>
+                            <button class="scale-btn" id="scale-100-btn" onclick="setScale(100)">
+                                <span class="scale-number">0-100</span>
+                                <span class="scale-desc">Εκατονταβάθμια</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Score Section - Scale 20 -->
+                    <div class="score-section" id="score-section-20">
+                        <div class="score-display">
+                            <span class="score-value" id="score-display-20">10</span>
+                            <span class="score-max">/20</span>
+                        </div>
+                        <input type="range" class="score-slider" id="score-slider-20" 
+                               min="0" max="20" step="0.5" value="10"
+                               oninput="updateScore20(this.value)">
+                        <div class="quick-scores">
+                            <button class="quick-score-btn" onclick="setScore20(5)">5</button>
+                            <button class="quick-score-btn" onclick="setScore20(10)">10</button>
+                            <button class="quick-score-btn" onclick="setScore20(12)">12</button>
+                            <button class="quick-score-btn" onclick="setScore20(15)">15</button>
+                            <button class="quick-score-btn" onclick="setScore20(18)">18</button>
+                            <button class="quick-score-btn" onclick="setScore20(20)">20</button>
+                        </div>
+                    </div>
+
+                    <!-- Score Section - Scale 100 (Hidden by default) -->
+                    <div class="score-section" id="score-section-100" style="display: none;">
+                        <div class="score-display">
+                            <span class="score-value" id="score-display-100">50</span>
+                            <span class="score-max">/100</span>
+                        </div>
+                        <input type="range" class="score-slider" id="score-slider-100" 
+                               min="0" max="100" step="0.5" value="50"
+                               oninput="updateScore100(this.value)">
+                        <div class="quick-scores">
+                            <button class="quick-score-btn" onclick="setScore100(25)">25</button>
+                            <button class="quick-score-btn" onclick="setScore100(50)">50</button>
+                            <button class="quick-score-btn" onclick="setScore100(60)">60</button>
+                            <button class="quick-score-btn" onclick="setScore100(75)">75</button>
+                            <button class="quick-score-btn" onclick="setScore100(85)">85</button>
+                            <button class="quick-score-btn" onclick="setScore100(100)">100</button>
+                        </div>
+                    </div>
+
+                    <!-- Notes -->
+                    <div class="notes-group">
+                        <label class="select-label">Περιγραφή / Σχόλια</label>
+                        <textarea class="notes-textarea" id="notes-input" 
+                                  placeholder="Γράψτε τα σχόλιά σας εδώ..."></textarea>
+                        <div class="phrase-chips" id="phrase-chips">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Submit -->
+                    <button class="submit-btn" id="submit-btn" onclick="saveGrade()">
+                        <span>💾</span>
+                        <span>Αποθήκευση Βαθμού</span>
+                    </button>
+                </div>
+
+                <!-- Recent Grades -->
+                <div class="section-title">Πρόσφατες Βαθμολογήσεις</div>
+                <div class="grade-list" id="recent-grades">
+                    <div class="empty-state">
+                        <div class="empty-icon">📝</div>
+                        <div class="empty-text">Δεν υπάρχουν βαθμολογήσεις ακόμα</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History View -->
+            <div id="history-view" class="view">
+                <div class="section-title">Ιστορικό Βαθμών</div>
+                <div class="form-card">
+                    <div class="select-group">
+                        <label class="select-label">Φίλτρο Τάξης</label>
+                        <div class="select-wrapper">
+                            <select class="custom-select" id="history-class-filter" onchange="filterHistory()">
+                                <option value="">Όλες οι τάξεις</option>
+                            </select>
+                            <span class="select-arrow">▼</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="grade-list" id="history-list">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Student Card View -->
+            <div id="student-card-view" class="view">
+                <div class="section-title">Καρτέλα Μαθητή</div>
+                <div class="form-card">
+                    <div class="select-group">
+                        <label class="select-label">Τάξη</label>
+                        <div class="select-wrapper">
+                            <select class="custom-select" id="card-class" onchange="updateCardStudents()">
+                                <option value="">Επιλέξτε τάξη...</option>
+                            </select>
+                            <span class="select-arrow">▼</span>
+                        </div>
+                    </div>
+                    <div class="select-group">
+                        <label class="select-label">Μαθητής</label>
+                        <div class="select-wrapper">
+                            <select class="custom-select" id="card-student" onchange="loadStudentCard()" disabled>
+                                <option value="">Επιλέξτε πρώτα τάξη...</option>
+                            </select>
+                            <span class="select-arrow">▼</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Student Card Content -->
+                <div id="student-card-content">
+                    <div class="empty-state">
+                        <div class="empty-icon">👤</div>
+                        <div class="empty-text">Επιλέξτε μαθητή για να δείτε την καρτέλα του</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports View -->
+            <div id="reports-view" class="view">
+                <div class="section-title">Δημιουργία Αναφορών PDF</div>
+                <div class="report-options">
+                    <button class="report-btn" onclick="generateReport('student')">
+                        <div class="report-icon">👤</div>
+                        <div class="report-info">
+                            <h3>Ατομικό Δελτίο Μαθητή</h3>
+                            <p>Αναλυτική αναφορά για συγκεκριμένο μαθητή</p>
+                        </div>
+                    </button>
+                    <button class="report-btn" onclick="generateReport('studentGrid')">
+                        <div class="report-icon">👤</div>
+                        <div class="report-info">
+                            <h3>Ατομικό Δελτίο (Landscape)</h3>
+                            <p>Πίνακας μαθητή με όλα τα μαθήματα & κατηγορίες</p>
+                        </div>
+                    </button>
+                    <button class="report-btn" onclick="generateReport('studentFinal')">
+                        <div class="report-icon">✅</div>
+                        <div class="report-info">
+                            <h3>Καρτέλα Μαθητή - Τελικοί Βαθμοί</h3>
+                            <p>Εκτύπωση τελικών βαθμών μαθητή (ανά μάθημα)</p>
+                        </div>
+                    </button>
+                    <button class="report-btn" onclick="generateReport('class')">
+                        <div class="report-icon">📊</div>
+                        <div class="report-info">
+                            <h3>Κατάσταση Τάξης</h3>
+                            <p>Συγκεντρωτική αναφορά όλων των μαθητών</p>
+                        </div>
+                    </button>
+                    <button class="report-btn" onclick="generateReport('classGrid')">
+                        <div class="report-icon">📋</div>
+                        <div class="report-info">
+                            <h3>Πίνακας Τμήματος (Landscape)</h3>
+                            <p>Αλφαβητικά με όλες τις κατηγορίες βαθμολόγησης</p>
+                        </div>
+                    </button>
+                    <button class="report-btn" onclick="generateReport('classFinal')">
+                        <div class="report-icon">✅</div>
+                        <div class="report-info">
+                            <h3>Καρτέλα Ανά Τάξη - Τελικοί Βαθμοί</h3>
+                            <p>Συγκεντρωτικός πίνακας τελικών βαθμών ανά τμήμα</p>
+                        </div>
+                    </button>
+                    <button class="report-btn" onclick="generateReport('period')">
+                        <div class="report-icon">📅</div>
+                        <div class="report-info">
+                            <h3>Αναφορά Περιόδου</h3>
+                            <p>Στατιστικά και ανάλυση τριμήνου</p>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Selected Student Banner -->
+        <div class="selected-student-banner" id="student-banner">
+            <div class="selected-student-name" id="banner-student-name">-</div>
+            <div class="selected-student-class" id="banner-class-name">-</div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" onclick="showView('grading')">
+                <span class="nav-icon">✏️</span>
+                <span class="nav-label">Βαθμολόγηση</span>
+            </button>
+            <button class="nav-item" onclick="showView('student-card')">
+                <span class="nav-icon">👤</span>
+                <span class="nav-label">Καρτέλα</span>
+            </button>
+            <button class="nav-item" onclick="showView('history')">
+                <span class="nav-icon">📋</span>
+                <span class="nav-label">Ιστορικό</span>
+            </button>
+            <button class="nav-item" onclick="showView('reports')">
+                <span class="nav-icon">📄</span>
+                <span class="nav-label">Αναφορές</span>
+            </button>
+        </nav>
+
+        <!-- Toast -->
+        <div class="toast" id="toast"></div>
+    </div>
+
+    <!-- Report Modal -->
+    <div class="modal-overlay" id="report-modal">
+        <div class="modal-content">
+            <div class="modal-handle"></div>
+            <div class="modal-title" id="modal-title">Επιλογή Μαθητή</div>
+            <div id="modal-body">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============== HYBRID OFFLINE→SYNC→CLEAR (mobile-safe) ==============
+        const APP_BUILD = '2026-01-19-finalreports1';
+        const HYBRID_CLEAR_LOCAL_ON_FULL_SYNC = true;
+        const LOCAL_GRADES_KEY = 'bizou_grades';
+        const LOCAL_SYNC_QUEUE_KEY = 'google_sync_queue_v1';
+
+        (function versionedWipe(){
+            try {
+                const prev = localStorage.getItem('bizou_app_build');
+                if (prev !== APP_BUILD) {
+                    // New build detected: wipe local history + pending queue to avoid "ghost" entries
+                    localStorage.removeItem(LOCAL_GRADES_KEY);
+                    localStorage.removeItem(LOCAL_SYNC_QUEUE_KEY);
+                    // Best-effort deep clean (mobile Chrome): IndexedDB + Cache Storage
+                    try {
+                        if (indexedDB && indexedDB.databases) {
+                            indexedDB.databases().then(dbs => dbs.forEach(db => db && db.name && indexedDB.deleteDatabase(db.name)));
+                        }
+                    } catch (e) {}
+                    try {
+                        if (caches && caches.keys) {
+                            caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
+                        }
+                    } catch (e) {}
+                    localStorage.setItem('bizou_app_build', APP_BUILD);
+                }
+            } catch(e) { /* ignore */ }
+        })();
+
+        // Helper for manual reset (optional): run in console: window.bizouHardReset()
+        window.bizouHardReset = function(){
+            try {
+                localStorage.removeItem(LOCAL_GRADES_KEY);
+                localStorage.removeItem(LOCAL_SYNC_QUEUE_KEY);
+                localStorage.removeItem('bizou_access_ok');
+                alert('Έγινε καθαρισμός τοπικών δεδομένων. Κάνε refresh.');
+            } catch(e) {
+                alert('Δεν μπόρεσα να καθαρίσω τοπικά δεδομένα: ' + e);
+            }
+        };
+
+        // ============== DATA ==============
+        const classes = [
+            { id: "A1_LYK_2025_2026", name: "Α1 ΛΥΚΕΙΟΥ ΓΕΝΙΚΗΣ ΠΑΙΔΕΙΑΣ", year: "2025-2026" },
+            { id: "A2_LYK_2025_2026", name: "Α2 ΛΥΚΕΙΟΥ ΓΕΝΙΚΗΣ ΠΑΙΔΕΙΑΣ", year: "2025-2026" },
+            { id: "A1_GYM_2025_2026", name: "Α1 ΓΥΜΝΑΣΙΟΥ ΓΕΝΙΚΗΣ ΠΑΙΔΕΙΑΣ", year: "2025-2026" },
+            { id: "A2_GYM_2025_2026", name: "Α2 ΓΥΜΝΑΣΙΟΥ ΓΕΝΙΚΗΣ ΠΑΙΔΕΙΑΣ", year: "2025-2026" },
+            { id: "B1_GYM_2025_2026", name: "Β1 ΓΥΜΝΑΣΙΟΥ ΓΕΝΙΚΗΣ ΠΑΙΔΕΙΑΣ", year: "2025-2026" },
+            { id: "B2_GYM_2025_2026", name: "Β2 ΓΥΜΝΑΣΙΟΥ ΓΕΝΙΚΗΣ ΠΑΙΔΕΙΑΣ", year: "2025-2026" }
+        ];
+
+        const students = [
+            { classId: "A2_GYM_2025_2026", regNo: "1216", name: "ΛΟΓΟΘΕΤΗ ΔΗΜΗΤΡΑ - ΠΑΡΑΣΚΕΥΗ" },
+            { classId: "A2_GYM_2025_2026", regNo: "1231", name: "ΜΑΝΤΖΙΟΣ ΧΡΗΣΤΟΣ" },
+            { classId: "A2_GYM_2025_2026", regNo: "1203", name: "ΜΑΡΓΗ ΑΓΑΘΗ" },
+            { classId: "A2_GYM_2025_2026", regNo: "1204", name: "ΜΕΣΣΗΝΗΣ ΦΙΛΙΠΠΟΣ" },
+            { classId: "A2_GYM_2025_2026", regNo: "1232", name: "ΜΗΛΙΩΤΗ ΧΡΙΣΤΙΝΑ" },
+            { classId: "A2_GYM_2025_2026", regNo: "1243", name: "ΜΠΑΛΑΤΣΟΥΡΑΣ ΔΗΜΗΤΡΙΟΣ" },
+            { classId: "A2_GYM_2025_2026", regNo: "1205", name: "ΜΠΑΡΙΑΜΗΣ ΒΑΣΙΛΕΙΟΣ" },
+            { classId: "A2_GYM_2025_2026", regNo: "1213", name: "ΜΠΕΛΕΓΡΙΝΟΣ ΛΟΥΚΑΣ" },
+            { classId: "A2_GYM_2025_2026", regNo: "1220", name: "ΜΠΕΝΝΕΤ ΧΑΡΡΥ ΤΖΟΡΤΖ" },
+            { classId: "A2_GYM_2025_2026", regNo: "1206", name: "ΝΙΑΦΑΣ ΣΠΥΡΙΔΩΝ" },
+            { classId: "A2_GYM_2025_2026", regNo: "1196", name: "ΠΑΛΗΟΓΙΑΝΝΗ ΑΙΜΙΛΙΑ-ΘΕΜΙΣ" },
+            { classId: "A2_GYM_2025_2026", regNo: "1233", name: "ΠΑΠΑΔΟΠΟΥΛΟΣ ΣΩΚΡΑΤΗΣ" },
+            { classId: "A2_GYM_2025_2026", regNo: "1214", name: "ΠΑΤΣΙΡΟΓΙΑΝΝΗ ΒΑΣΙΛΙΚΗ" },
+            { classId: "A2_GYM_2025_2026", regNo: "1207", name: "ΠΕΤΡΟΥΣΗ ΛΥΔΙΑ" },
+            { classId: "A2_GYM_2025_2026", regNo: "1208", name: "ΠΟΛΙΤΗ ΧΡΙΣΤΙΝΑ" },
+            { classId: "A2_GYM_2025_2026", regNo: "1234", name: "ΡΟΜΠΟΤΗ ΔΕΛΙΑ" },
+            { classId: "A2_GYM_2025_2026", regNo: "1238", name: "ΣΑΒΒΙΔΗΣ ΑΛΕΞΑΝΔΡΟΣ" },
+            { classId: "A2_GYM_2025_2026", regNo: "1240", name: "ΣΑΜΨΩΝΑΣ ΓΕΩΡΓΙΟΣ" },
+            { classId: "A2_GYM_2025_2026", regNo: "1209", name: "ΣΑΡΑΝΤΙΝΟΥ ΑΚΡΙΒΗ" },
+            { classId: "A2_GYM_2025_2026", regNo: "1210", name: "ΣΟΛΛΑΤΟΥ ΙΩΑΝΝΑ" },
+            { classId: "A2_GYM_2025_2026", regNo: "1211", name: "ΤΖΕΒΕΛΕΚΗ ΝΕΦΕΛΗ" },
+            { classId: "A2_GYM_2025_2026", regNo: "1215", name: "ΤΣΑΚΝΑΚΗΣ ΓΕΩΡΓΙΟΣ" },
+            { classId: "A2_GYM_2025_2026", regNo: "1239", name: "ΤΣΙΟΝΑΚΑ ΑΝΑΣΤΑΣΙΑ" },
+            { classId: "A2_GYM_2025_2026", regNo: "1235", name: "ΧΑΪΔΑΚΗ ΚΩΝΣΤΑΝΤΙΝΑ" },
+            { classId: "A1_GYM_2025_2026", regNo: "1221", name: "ΑΠΟΣΤΟΛΙΑ ΜΑΡΙΑ" },
+            { classId: "A1_GYM_2025_2026", regNo: "1222", name: "ΑΡΚΟΥΜΑΝΗ ΧΡΥΣΟΥΛΑ" },
+            { classId: "A1_GYM_2025_2026", regNo: "1223", name: "ΑΥΓΕΡΙΝΟΣ ΧΡΗΣΤΟΣ" },
+            { classId: "A1_GYM_2025_2026", regNo: "1224", name: "ΓΕΙΤΟΝΑ ΖΑΜΠΙΑ" },
+            { classId: "A1_GYM_2025_2026", regNo: "1212", name: "ΓΕΩΡΓΑΚΗ ΖΩΗ" },
+            { classId: "A1_GYM_2025_2026", regNo: "1225", name: "ΔΕΣΥΛΛΑΣ ΣΠΥΡΙΔΩΝ" },
+            { classId: "A1_GYM_2025_2026", regNo: "1197", name: "ΖΑΒΙΤΣΑΝΟΣ ΣΠΥΡΙΔΩΝ - ΔΙΟΝΥΣΙΟΣ" },
+            { classId: "A1_GYM_2025_2026", regNo: "1241", name: "ΚΑΛΠΟΔΗΜΟΣ ΣΠΥΡΙΔΩΝ" },
+            { classId: "A1_GYM_2025_2026", regNo: "1226", name: "ΚΑΡΑΓΙΑΝΝΗΣ ΕΠΑΜΕΙΝΩΝΔΑΣ" },
+            { classId: "A1_GYM_2025_2026", regNo: "1227", name: "ΚΑΡΑΜΠΑΛΗ ΜΑΡΙΑ ΠΑΝΑΓΙΩΤΑ" },
+            { classId: "A1_GYM_2025_2026", regNo: "1228", name: "ΚΑΡΑΜΠΑΛΗΣ ΦΙΛΙΠΠΟΣ" },
+            { classId: "A1_GYM_2025_2026", regNo: "1242", name: "ΚΑΡΛΕΣΗ ΙΣΑΜΠΕΛΛΑ-ΦΡΑΝΤΣΕΣΚΑ" },
+            { classId: "A1_GYM_2025_2026", regNo: "1198", name: "ΚΑΡΥΔΗΣ ΣΩΤΗΡΙΟΣ - ΒΙΚΕΝΤΙΟΣ" },
+            { classId: "A1_GYM_2025_2026", regNo: "1199", name: "ΚΑΣΟΥΡΑΣ ΘΕΟΔΩΡΟΣ - ΝΙΚΟΛΑΟΣ" },
+            { classId: "A1_GYM_2025_2026", regNo: "1229", name: "ΚΑΤΩΠΟΔΗ ΙΩΑΝΝΑ" },
+            { classId: "A1_GYM_2025_2026", regNo: "1200", name: "ΚΑΤΩΠΟΔΗΣ ΑΝΤΩΝΙΟΣ" },
+            { classId: "A1_GYM_2025_2026", regNo: "1230", name: "ΚΟΛΛΟΚΑ ΑΡΙΑΔΝΗ" },
+            { classId: "A1_GYM_2025_2026", regNo: "1201", name: "ΚΟΛΛΟΚΑΣ ΔΗΜΗΤΡΙΟΣ" },
+            { classId: "A1_GYM_2025_2026", regNo: "1237", name: "ΚΟΝΤΟΣ ΑΝΔΡΕΑΣ-ΜΑΞΙΜΟΣ" },
+            { classId: "A1_GYM_2025_2026", regNo: "1202", name: "ΚΡΗΤΙΚΟΥ ΣΟΦΙΑ" },
+            { classId: "A1_GYM_2025_2026", regNo: "1217", name: "ΚΩΛΕΤΣΗΣ ΕΚΤΟΡΑΣ" },
+            { classId: "A1_GYM_2025_2026", regNo: "1218", name: "ΛΙΟΔΑΚΗΣ ΑΓΓΕΛΟΣ" },
+            { classId: "A1_GYM_2025_2026", regNo: "1219", name: "ΜΑΝΩΛΙΤΣΗ ΦΙΛΙΠΠΑ - ΔΕΣΠΟΙΝΑ" },
+            { classId: "A1_GYM_2025_2026", regNo: "1236", name: "ΜΙΚΡΩΝΗ ΚΟΥΡΤΗ ΛΥΔΙΑ" },
+            { classId: "B1_GYM_2025_2026", regNo: "1151", name: "ΑΝΤΡΕΑ ΣΟΦΙΑ - ΒΑΝΕΣΑ" },
+            { classId: "B1_GYM_2025_2026", regNo: "1152", name: "ΑΡΓΥΡΟΥ ΓΕΩΡΓΙΑ - ΧΑΡΑ" },
+            { classId: "B1_GYM_2025_2026", regNo: "1153", name: "ΑΡΜΑΤΑΣ ΜΑΡΙΟ - ΤΕΡΙ" },
+            { classId: "B1_GYM_2025_2026", regNo: "1154", name: "ΒΑΣΙΟΥ ΔΗΜΗΤΡΑ ΕΥΑΓΓΕΛΙΑ" },
+            { classId: "B1_GYM_2025_2026", regNo: "1155", name: "ΒΕΡΓΙΝΗ ΘΕΩΝΗ - ΜΑΡΙΑ" },
+            { classId: "B1_GYM_2025_2026", regNo: "1156", name: "ΓΑΛΑΝΟΠΟΥΛΟΣ ΓΕΩΡΓΙΟΣ" },
+            { classId: "B1_GYM_2025_2026", regNo: "1157", name: "ΓΙΑΝΝΟΠΟΥΛΟΥ ΦΑΙΔΡΑ" },
+            { classId: "B1_GYM_2025_2026", regNo: "1158", name: "ΓΡΑΨΑ ΕΥΡΥΔΙΚΗ ΕΛΕΝΗ" },
+            { classId: "B1_GYM_2025_2026", regNo: "1161", name: "ΔΑΜΙΑΝΗΣ ΚΩΝΣΤΑΝΤΙΝΟΣ" },
+            { classId: "B1_GYM_2025_2026", regNo: "1162", name: "ΖΑΒΙΤΣΑΝΟΥ ΠΑΡΑΣΚΕΥΗ" },
+            { classId: "B1_GYM_2025_2026", regNo: "1163", name: "ΘΕΙΑΚΟΥ ΑΙΚΑΤΕΡΙΝΗ - ΜΑΡΓΑΡΙΤΑ" },
+            { classId: "B1_GYM_2025_2026", regNo: "1164", name: "ΚΑΒΒΑΔΑΣ ΔΗΜΗΤΡΙΟΣ" },
+            { classId: "B1_GYM_2025_2026", regNo: "1166", name: "ΚΑΤΑΓΗ ΙΩΑΝΝΑ" },
+            { classId: "B1_GYM_2025_2026", regNo: "1167", name: "ΚΑΤΩΠΟΔΗ ΑΙΚΑΤΕΡΙΝΗ" },
+            { classId: "B1_GYM_2025_2026", regNo: "1168", name: "ΚΑΤΩΠΟΔΗ ΓΕΩΡΓΙΑ" },
+            { classId: "B1_GYM_2025_2026", regNo: "1169", name: "ΚΑΦΕΝΤΖΗΣ ΑΛΕΞΑΝΔΡΟΣ" },
+            { classId: "B1_GYM_2025_2026", regNo: "1170", name: "ΚΥΡΩΣΗΣ ΓΕΩΡΓΙΟΣ ΑΡΗΣ" },
+            { classId: "B1_GYM_2025_2026", regNo: "1171", name: "ΜΑΣΟΥΡΗ ΜΑΡΙΑ ΠΑΡΑΣΚΕΥΗ" },
+            { classId: "B1_GYM_2025_2026", regNo: "1174", name: "ΜΕΤΑΛΙΝΟΥ ΣΤΑΜΑΤΙΝΑ" },
+            { classId: "B1_GYM_2025_2026", regNo: "1194", name: "ΤΖΑΝΙΝΗ ΚΑΡΟΛΙΝΑ" },
+            { classId: "B1_GYM_2025_2026", regNo: "1195", name: "ΧΡΙΣΤΟΦΙΔΗ ΣΜΑΡΑΓΔΑ" },
+            { classId: "B2_GYM_2025_2026", regNo: "1159", name: "ΓΡΙΒΑ ΔΕΣΠΟΙΝΑ - ΔΗΜΗΤΡΑ" },
+            { classId: "B2_GYM_2025_2026", regNo: "1165", name: "ΚΑΣΑΡΙ ΑΡΤΕΜΙΣ" },
+            { classId: "B2_GYM_2025_2026", regNo: "1173", name: "ΜΑΥΡΟΚΕΦΑΛΟΥ - ΧΑΛΙΚΙΑ ΔΕΣΠΟΙΝΑ" },
+            { classId: "B2_GYM_2025_2026", regNo: "1175", name: "ΜΩΡΑΪΤΗ ΑΓΓΕΛΙΚΗ" },
+            { classId: "B2_GYM_2025_2026", regNo: "1176", name: "ΝΙΑΦΑ ΝΕΦΕΛΗ" },
+            { classId: "B2_GYM_2025_2026", regNo: "1177", name: "ΝΤΆΪΚΟΥ ΕΛΕΝΗ" },
+            { classId: "B2_GYM_2025_2026", regNo: "1178", name: "ΠΑΛΗΟΓΙΑΝΝΗΣ ΧΡΗΣΤΟΣ ΑΓΓΕΛΟΣ" },
+            { classId: "B2_GYM_2025_2026", regNo: "1179", name: "ΠΑΞΙΝΟΣ ΝΙΚΟΛΑΟΣ" },
+            { classId: "B2_GYM_2025_2026", regNo: "1180", name: "ΠΑΠΑΔΟΠΟΥΛΟΣ ΓΕΩΡΓΙΟΣ" },
+            { classId: "B2_GYM_2025_2026", regNo: "1181", name: "ΠΑΠΑΛΑΥΡΕΝΤΙΟΥ ΦΟΙΒΗ" },
+            { classId: "B2_GYM_2025_2026", regNo: "1182", name: "ΠΑΠΟΥΤΣΟΠΟΥΛΟΥ ΕΛΕΝΗ" },
+            { classId: "B2_GYM_2025_2026", regNo: "1183", name: "ΠΟΛΙΤΗ ΕΙΡΗΝΗ" },
+            { classId: "B2_GYM_2025_2026", regNo: "1184", name: "ΠΟΥΤΟΚΑ ΕΛΕΝΗ" },
+            { classId: "B2_GYM_2025_2026", regNo: "1185", name: "ΡΑΦΤΟΓΙΑΝΝΗ ΑΓΓΕΛΙΚΗ - ΜΑΡΙΑ" },
+            { classId: "B2_GYM_2025_2026", regNo: "1188", name: "ΣΚΛΑΒΕΝΙΤΗΣ ΔΗΜΗΤΡΙΟΣ - ΔΙΟΝΥΣΙΟΣ" },
+            { classId: "B2_GYM_2025_2026", regNo: "1189", name: "ΣΚΛΑΒΕΝΙΤΗΣ ΝΙΚΟΛΑΟΣ" },
+            { classId: "B2_GYM_2025_2026", regNo: "1192", name: "ΣΤΡΑΓΑΛΙΝΟΥ ΑΝΝΑ-ΝΕΚΤΑΡΙΑ" },
+            { classId: "B2_GYM_2025_2026", regNo: "1193", name: "ΣΤΡΑΓΑΛΙΝΟΥ ΣΤΑΜΑΤΙΝΑ" },
+            { classId: "A1_LYK_2025_2026", regNo: "826", name: "ΑΝΔΡΙΟΠΟΥΛΟΣ ΝΙΚΟΛΑΟΣ" },
+            { classId: "A1_LYK_2025_2026", regNo: "827", name: "ΑΡΓΥΡΗΣ ΕΥΑΓΓΕΛΟΣ" },
+            { classId: "A1_LYK_2025_2026", regNo: "828", name: "ΒΑΣΙΟΥ ΜΥΡΣΙΝΗ ΑΚΡΙΒΗ" },
+            { classId: "A1_LYK_2025_2026", regNo: "829", name: "ΒΡΕΤΤΟΣ ΒΑΣΙΛΕΙΟΣ" },
+            { classId: "A1_LYK_2025_2026", regNo: "830", name: "ΓΕΩΡΓΑΚΗ ΕΙΡΗΝΗ" },
+            { classId: "A1_LYK_2025_2026", regNo: "831", name: "ΓΕΩΡΓΑΚΗΣ ΑΓΓΕΛΟΣ" },
+            { classId: "A1_LYK_2025_2026", regNo: "832", name: "ΔΗΜΑΚΗΣ ΙΩΑΝΝΗΣ-ΜΑΞΙΜΟΣ" },
+            { classId: "A1_LYK_2025_2026", regNo: "833", name: "ΔΡΕΤΤΑ ΕΥΤΥΧΙΑ ΚΥΡΙΑΚΗ" },
+            { classId: "A1_LYK_2025_2026", regNo: "834", name: "ΕΡΓΑΖΑΚΗΣ ΚΩΝΣΤΑΝΤΙΝΟΣ" },
+            { classId: "A1_LYK_2025_2026", regNo: "835", name: "ΖΑΒΙΤΣΑΝΟΣ ΝΙΚΗΤΑΣ" },
+            { classId: "A1_LYK_2025_2026", regNo: "836", name: "ΚΑΡΑΜΠΟΪΚΗ ΕΛΙΣΑΒΕΤ" },
+            { classId: "A1_LYK_2025_2026", regNo: "837", name: "ΚΑΣΟΥΡΑ ΔΗΜΗΤΡΑ-ΒΑΣΙΛΙΚΗ" },
+            { classId: "A1_LYK_2025_2026", regNo: "838", name: "ΚΑΤΑΓΗ ΜΑΡΙΝΑ" },
+            { classId: "A1_LYK_2025_2026", regNo: "839", name: "ΚΑΤΩΠΟΔΗΣ ΔΙΟΝΥΣΗΣ" },
+            { classId: "A1_LYK_2025_2026", regNo: "840", name: "ΚΑΤΩΠΟΔΗΣ ΘΕΟΔΩΡΟΣ" },
+            { classId: "A1_LYK_2025_2026", regNo: "841", name: "ΚΟΓΚΑ ΔΗΜΗΤΡΑ" },
+            { classId: "A1_LYK_2025_2026", regNo: "844", name: "ΚΩΣΤΑΚΗΣ ΜΑΡΚΟΣ-ΧΡΗΣΤΟΣ" },
+            { classId: "A1_LYK_2025_2026", regNo: "845", name: "ΜΑΚΡΥΓΕΩΡΓΟΥ-ΜΠΙΡΜΠΑ ΜΑΡΙΑ-ΛΟΥΚΙΑ" },
+            { classId: "A1_LYK_2025_2026", regNo: "846", name: "ΜΑΛΦΑ ΓΕΩΡΓΙΑ-ΜΑΡΙΑ" },
+            { classId: "A1_LYK_2025_2026", regNo: "852", name: "ΡΟΚΟΥ ΔΕΣΠΟΙΝΑ" },
+            { classId: "A1_LYK_2025_2026", regNo: "861", name: "ΤΣΑΚΝΑΚΗ ΕΒΕΛΙΝΑ-ΠΑΡΑΣΚΕΥΗ" },
+            { classId: "A2_LYK_2025_2026", regNo: "842", name: "ΚΟΥΤΣΟΛΙΑΚΟΥ ΑΛΕΞΑΝΔΡΑ - ΔΕΣΠΟΙΝΑ" },
+            { classId: "A2_LYK_2025_2026", regNo: "843", name: "ΚΡΗΤΙΚΟΣ ΣΠΥΡΙΔΩΝ" },
+            { classId: "A2_LYK_2025_2026", regNo: "847", name: "ΜΙΤΙΛΗ ΑΝΑΣΤΑΣΙΑ" },
+            { classId: "A2_LYK_2025_2026", regNo: "848", name: "ΜΠΑΛΑΪ ΝΙΚΟΛΑΟΣ-ΘΕΟΔΩΡΟΣ" },
+            { classId: "A2_LYK_2025_2026", regNo: "849", name: "ΠΑΞΙΝΟΥ ΑΛΕΞΑΝΔΡΑ" },
+            { classId: "A2_LYK_2025_2026", regNo: "850", name: "ΠΑΠΑΔΟΠΟΥΛΟΣ ΕΥΣΤΑΘΙΟΣ" },
+            { classId: "A2_LYK_2025_2026", regNo: "851", name: "ΠΑΠΑΔΟΠΟΥΛΟΣ ΙΩΑΝΝΗΣ" },
+            { classId: "A2_LYK_2025_2026", regNo: "853", name: "ΡΟΜΠΟΤΗ ΑΦΡΟΔΙΤΗ" },
+            { classId: "A2_LYK_2025_2026", regNo: "854", name: "ΡΟΜΠΟΤΗ ΚΩΝΣΤΑΝΤΙΝΑ" },
+            { classId: "A2_LYK_2025_2026", regNo: "855", name: "ΣΓΟΥΡΟΠΟΥΛΟΣ ΣΠΥΡΙΔΩΝ" },
+            { classId: "A2_LYK_2025_2026", regNo: "856", name: "ΣΓΟΥΡΟΠΟΥΛΟΥ ΖΩΗ" },
+            { classId: "A2_LYK_2025_2026", regNo: "857", name: "ΣΙΔΕΡΑΣ ΑΛΕΞΑΝΔΡΟΣ" },
+            { classId: "A2_LYK_2025_2026", regNo: "858", name: "ΣΟΥΝΔΙΑΣ ΔΗΜΗΤΡΙΟΣ" },
+            { classId: "A2_LYK_2025_2026", regNo: "859", name: "ΣΤΡΑΤΟΣ ΑΛΕΞΑΝΔΡΟΣ-ΜΙΧΑΗΛ" },
+            { classId: "A2_LYK_2025_2026", regNo: "860", name: "ΤΑΝΤAΡΟΣ ΙΑΣΟΝΑΣ" },
+            { classId: "A2_LYK_2025_2026", regNo: "862", name: "ΤΣΑΡΝΑ ΔΗΜΗΤΡΑ" },
+            { classId: "A2_LYK_2025_2026", regNo: "863", name: "ΦΕΤΣΗ ΝΕΦΕΛΗ" },
+            { classId: "A2_LYK_2025_2026", regNo: "864", name: "ΦΡΕΜΕΝΤΙΤΗΣ ΑΝΑΣΤΑΣΙΟΣ ΠΑΥΛΟΣ" },
+            { classId: "A2_LYK_2025_2026", regNo: "865", name: "ΦΩΤΕΙΝΟΥ ΧΑΡΑ" },
+            { classId: "A2_LYK_2025_2026", regNo: "866", name: "ΧΟΡΤΗΣ ΜΑΡΙΟΣ" },
+            { classId: "A2_LYK_2025_2026", regNo: "867", name: "ΧΡΙΣΤΟΦΙΔΗ ΓΕΩΡΓΙΑ" }
+        ];
+
+        const subjects = ["ΟΔΥΣΣΕΙΑ", "ΑΡΧΑΙΑ", "ΙΣΤΟΡΙΑ", "ΓΛΩΣΣΑ", "ΑΡΧΑΙΑ ΓΛΩΣΣΑ"];
+        const categories = ["ΔΙΑΓΩΝΙΣΜΑ", "ΤΕΣΤ", "ΠΡΟΦΟΡΙΚΑ", "ΕΡΓΑΣΙΑ", "ΤΕΤΡΑΔΙΟ", "ΠΑΡΑΘΕΜΑ", "ΠΑΡΑΓΡΑΦΟΣ", "ΠΕΡΙΛΗΨΗ", "ΕΚΘΕΣΗ", "ΕΞΕΤΑΣΕΙΣ"];
+        const periods = [
+            { id: '1', name: 'Α΄ Τρίμηνο', start: '2025-09-01', end: '2025-12-31' },
+            { id: '2', name: 'Β΄ Τετράμηνο', start: '2026-01-01', end: '2026-05-31' }
+        ];
+        
+        const commentPhrases = [
+            { id: 1, category: "Θετικό", text: "Πολύ καλή προσπάθεια σήμερα." },
+            { id: 2, category: "Θετικό", text: "Σαφής δομή και σωστή τεκμηρίωση." },
+            { id: 3, category: "Βελτίωση", text: "Χρειάζεται περισσότερη προσοχή στην ανάλυση." },
+            { id: 4, category: "Βελτίωση", text: "Να βελτιώσει την ορθογραφία/σημεία στίξης." },
+            { id: 5, category: "Συμπεριφορά", text: "Συνεργάσιμος/η στην τάξη." },
+            { id: 6, category: "Συμπεριφορά", text: "Απαιτείται καλύτερη συγκέντρωση κατά τη διάρκεια του μαθήματος." }
+        ];
+        // -----------------------------
+        // Gradebook ("database") cache
+        // - Reports MUST read from the gradebook.
+        // - History may hide records without deleting them from the gradebook.
+        // -----------------------------
+        const GRADEBOOK_KEY = 'bizou_gradebook_v1';
+        const LEGACY_GRADEBOOK_KEY = 'bizou_grades';
+        // const HISTORY_HIDDEN_KEY removed (duplicate);
+
+        function loadGradebook_() {
+            let raw = localStorage.getItem(GRADEBOOK_KEY);
+            if (!raw) raw = localStorage.getItem(LEGACY_GRADEBOOK_KEY);
+            let arr;
+            try { arr = JSON.parse(raw || '[]'); } catch(e) { arr = []; }
+            arr = Array.isArray(arr) ? arr : [];
+            // Normalize (older records may not have the new fields)
+            arr = arr.map(g => ({...g, synced: (g && typeof g.synced === 'boolean') ? g.synced : false}));
+            // Migrate forward
+            try { localStorage.setItem(GRADEBOOK_KEY, JSON.stringify(arr)); } catch(e) {}
+            return arr;
+        }
+
+        function saveGradebook_() {
+            try { localStorage.setItem(GRADEBOOK_KEY, JSON.stringify(grades)); } catch(e) {}
+        }
+
+        // -----------------------------
+        // History 'delete' is actually HIDE (does NOT affect gradebook/reports)
+        // -----------------------------
+        const HISTORY_HIDDEN_KEY = 'bizou_history_hidden_ids_v1';
+
+        function getHiddenHistoryIds_() {
+            try {
+                const raw = localStorage.getItem(HISTORY_HIDDEN_KEY) || '[]';
+                const arr = JSON.parse(raw);
+                return new Set((Array.isArray(arr) ? arr : []).map(String));
+            } catch(e) {
+                return new Set();
+            }
+        }
+
+        function setHiddenHistoryIds_(setObj) {
+            try { localStorage.setItem(HISTORY_HIDDEN_KEY, JSON.stringify(Array.from(setObj))); } catch(e) {}
+        }
+
+        function hideHistoryGrade(id) {
+            const hid = getHiddenHistoryIds_();
+            hid.add(String(id));
+            setHiddenHistoryIds_(hid);
+            renderHistory();
+        }
+
+        function unhideAllHistory() {
+            try { localStorage.removeItem(HISTORY_HIDDEN_KEY); } catch(e) {}
+            renderHistory();
+        }
+
+
+
+        function getHiddenHistoryIds_() {
+            try {
+                const raw = localStorage.getItem(HISTORY_HIDDEN_KEY) || '[]';
+                const arr = JSON.parse(raw);
+                return new Set(Array.isArray(arr) ? arr.map(String) : []);
+            } catch(e) {
+                return new Set();
+            }
+        }
+
+        function setHiddenHistoryIds_(set) {
+            try { localStorage.setItem(HISTORY_HIDDEN_KEY, JSON.stringify(Array.from(set))); } catch(e) {}
+        }
+
+        // Gradebook in memory
+        let grades = loadGradebook_();
+        // ============== INITIALIZATION ==============
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set today's date as default
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('grade-date').value = today;
+            
+            initializeDropdowns();
+            initializePhraseChips();
+            updateStats();
+            renderRecentGrades();
+        });
+
+        function initializeDropdowns() {
+            // Classes
+            const classSelect = document.getElementById('class-select');
+            const historyClassFilter = document.getElementById('history-class-filter');
+            const cardClassSelect = document.getElementById('card-class');
+            
+            classes.forEach(c => {
+                classSelect.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+                historyClassFilter.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+                cardClassSelect.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+            });
+
+            // Subjects
+            const subjectSelect = document.getElementById('subject-select');
+            subjects.forEach(s => {
+                subjectSelect.innerHTML += `<option value="${s}">${s}</option>`;
+            });
+
+            // Categories
+            const categorySelect = document.getElementById('category-select');
+            categories.forEach(c => {
+                categorySelect.innerHTML += `<option value="${c}">${c}</option>`;
+            });
+        }
+
+        function initializePhraseChips() {
+            const container = document.getElementById('phrase-chips');
+            commentPhrases.forEach(phrase => {
+                const chip = document.createElement('button');
+                chip.className = 'phrase-chip';
+                chip.textContent = phrase.text.substring(0, 30) + (phrase.text.length > 30 ? '...' : '');
+                chip.title = phrase.text;
+                chip.onclick = () => addPhrase(phrase.text);
+                container.appendChild(chip);
+            });
+        }
+
+        // ============== STUDENT BANNER ==============
+        function updateStudentBanner() {
+            const studentSelect = document.getElementById('student-select');
+            const classSelect = document.getElementById('class-select');
+            const banner = document.getElementById('student-banner');
+            const bannerName = document.getElementById('banner-student-name');
+            const bannerClass = document.getElementById('banner-class-name');
+
+            if (studentSelect.value) {
+                const student = students.find(s => s.regNo === studentSelect.value && s.classId === classSelect.value);
+                const className = classes.find(c => c.id === classSelect.value)?.name;
+                
+                bannerName.textContent = student?.name || '-';
+                bannerClass.textContent = className || '-';
+                banner.classList.add('visible');
+            } else {
+                banner.classList.remove('visible');
+            }
+            
+            // Update live stats when student changes
+            updateLiveStats();
+        }
+
+        // ============== LIVE STATS ==============
+        function updateLiveStats() {
+            const classId = document.getElementById('class-select').value;
+            const studentRegNo = document.getElementById('student-select').value;
+            const subject = document.getElementById('subject-select').value;
+            const category = document.getElementById('category-select').value;
+
+            const classAvgEl = document.getElementById('class-avg');
+            const studentAvgEl = document.getElementById('student-avg');
+
+            // Reset if not enough selections
+            if (!classId || !subject || !category) {
+                classAvgEl.textContent = '-';
+                studentAvgEl.textContent = '-';
+                return;
+            }
+
+            // Calculate class average for this subject + category
+            const classStudentIds = students.filter(s => s.classId === classId).map(s => s.regNo);
+            const classGrades = grades.filter(g => 
+                g.classId === classId && 
+                g.subject === subject && 
+                g.category === category
+            );
+
+            if (classGrades.length > 0) {
+                // Normalize scores to 20 scale for fair comparison
+                const normalizedScores = classGrades.map(g => {
+                    return g.scale === 100 ? (g.score / 5) : g.score;
+                });
+                const classAvg = normalizedScores.reduce((sum, s) => sum + s, 0) / normalizedScores.length;
+                classAvgEl.textContent = classAvg.toFixed(1);
+            } else {
+                classAvgEl.textContent = '-';
+            }
+
+            // Calculate student average for this subject + category
+            if (studentRegNo) {
+                const studentGrades = grades.filter(g => 
+                    g.studentRegNo === studentRegNo && 
+                    g.classId === classId &&
+                    g.subject === subject && 
+                    g.category === category
+                );
+
+                if (studentGrades.length > 0) {
+                    // Normalize scores to 20 scale
+                    const normalizedScores = studentGrades.map(g => {
+                        return g.scale === 100 ? (g.score / 5) : g.score;
+                    });
+                    const studentAvg = normalizedScores.reduce((sum, s) => sum + s, 0) / normalizedScores.length;
+                    studentAvgEl.textContent = studentAvg.toFixed(1);
+                } else {
+                    studentAvgEl.textContent = '-';
+                }
+            } else {
+                studentAvgEl.textContent = '-';
+            }
+        }
+
+        // ============== DROPDOWN HANDLERS ==============
+        function updateStudents() {
+            const classId = document.getElementById('class-select').value;
+            const studentSelect = document.getElementById('student-select');
+            const scaleSelection = document.getElementById('scale-selection');
+            
+            studentSelect.innerHTML = '<option value="">Επιλέξτε μαθητή...</option>';
+            
+            // Reset banner when class changes
+            document.getElementById('student-banner').classList.remove('visible');
+            
+            // Check if it's Lyceum (LYK) - show scale selection
+            const isLyceum = classId.includes('LYK');
+            scaleSelection.style.display = isLyceum ? 'block' : 'none';
+            
+            // Reset to scale 20 when changing class
+            if (!isLyceum) {
+                setScale(20);
+            }
+            
+            if (classId) {
+                studentSelect.disabled = false;
+                const classStudents = students
+                    .filter(s => s.classId === classId)
+                    .sort((a, b) => a.name.localeCompare(b.name, 'el'));
+                
+                classStudents.forEach(s => {
+                    studentSelect.innerHTML += `<option value="${s.regNo}">${s.name}</option>`;
+                });
+            } else {
+                studentSelect.disabled = true;
+                studentSelect.innerHTML = '<option value="">Επιλέξτε πρώτα τάξη...</option>';
+            }
+            
+            // Update live stats when class changes
+            updateLiveStats();
+        }
+
+        // ============== SCORE HANDLERS ==============
+        let currentScale = 20; // Default scale
+
+        function setScale(scale) {
+            currentScale = scale;
+            
+            // Update buttons
+            document.getElementById('scale-20-btn').classList.toggle('active', scale === 20);
+            document.getElementById('scale-100-btn').classList.toggle('active', scale === 100);
+            
+            // Show/hide score sections
+            document.getElementById('score-section-20').style.display = scale === 20 ? 'block' : 'none';
+            document.getElementById('score-section-100').style.display = scale === 100 ? 'block' : 'none';
+        }
+
+        function updateScore20(value) {
+            document.getElementById('score-display-20').textContent = value;
+            document.querySelectorAll('#score-section-20 .quick-score-btn').forEach(btn => {
+                btn.classList.toggle('active', parseFloat(btn.textContent) === parseFloat(value));
+            });
+        }
+
+        function setScore20(value) {
+            document.getElementById('score-slider-20').value = value;
+            updateScore20(value);
+        }
+
+        function updateScore100(value) {
+            document.getElementById('score-display-100').textContent = value;
+            document.querySelectorAll('#score-section-100 .quick-score-btn').forEach(btn => {
+                btn.classList.toggle('active', parseFloat(btn.textContent) === parseFloat(value));
+            });
+        }
+
+        function setScore100(value) {
+            document.getElementById('score-slider-100').value = value;
+            updateScore100(value);
+        }
+
+        // Legacy functions for compatibility
+        function updateScore(value) {
+            updateScore20(value);
+        }
+
+        function setScore(value) {
+            setScore20(value);
+        }
+
+        // ============== NOTES HANDLERS ==============
+        function addPhrase(text) {
+            const textarea = document.getElementById('notes-input');
+            const currentText = textarea.value;
+            textarea.value = currentText ? currentText + ' ' + text : text;
+        }
+
+        // ============== SAVE GRADE ==============
+        function saveGrade() {
+            const classId = document.getElementById('class-select').value;
+            const studentRegNo = document.getElementById('student-select').value;
+            const subject = document.getElementById('subject-select').value;
+            const category = document.getElementById('category-select').value;
+            const notes = document.getElementById('notes-input').value;
+            const selectedDate = document.getElementById('grade-date').value;
+
+            // Get score based on current scale
+            let score;
+            let scale;
+            if (currentScale === 100) {
+                score = parseFloat(document.getElementById('score-slider-100').value);
+                scale = 100;
+            } else {
+                score = parseFloat(document.getElementById('score-slider-20').value);
+                scale = 20;
+            }
+
+            // Validation
+            if (!classId || !studentRegNo || !subject || !category) {
+                showToast('Παρακαλώ συμπληρώστε όλα τα πεδία');
+                return;
+            }
+
+            if (!selectedDate) {
+                showToast('Παρακαλώ επιλέξτε ημερομηνία');
+                return;
+            }
+
+            const student = students.find(s => s.regNo === studentRegNo && s.classId === classId);
+            const className = classes.find(c => c.id === classId)?.name;
+
+            // Use selected date instead of now
+            const gradeDate = new Date(selectedDate + 'T12:00:00');
+
+            const grade = {
+                id: Date.now(),
+                classId,
+                className,
+                studentRegNo,
+                studentName: student?.name,
+                subject,
+                category,
+                score,
+                scale, // Store which scale was used
+                notes,
+                date: gradeDate.toISOString(),
+                synced: false
+            };
+
+            grades.unshift(grade);
+            localStorage.setItem(GRADEBOOK_KEY, JSON.stringify(grades));
+
+            // Shadow sync to Google Sheets (non-blocking)
+            try {
+                syncToGoogleSheets(grade, 'create');
+            } catch (e) {
+                console.warn('Google sync call failed:', e);
+            }
+
+            // Reset form (keep class, subject, category for quick entry)
+            document.getElementById('student-select').value = '';
+            document.getElementById('notes-input').value = '';
+            document.getElementById('student-banner').classList.remove('visible');
+            setScore20(10);
+            setScore100(50);
+
+            updateStats();
+            updateLiveStats();
+            renderRecentGrades();
+            showToast('✓ Ο βαθμός αποθηκεύτηκε');
+        }
+
+        // ============== STATS (Legacy - kept for compatibility) ==============
+        function updateStats() {
+            // Now handled by updateLiveStats()
+        }
+
+        // ============== RENDER GRADES ==============
+        function renderRecentGrades() {
+            const container = document.getElementById('recent-grades');
+            const recentGrades = grades.slice(0, 5);
+
+            if (recentGrades.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📝</div>
+                        <div class="empty-text">Δεν υπάρχουν βαθμολογήσεις ακόμα</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = recentGrades.map(g => {
+                const scaleLabel = g.scale === 100 ? '/100' : '/20';
+                return `
+                <div class="grade-item">
+                    <div class="grade-score-badge">${g.score}<span style="font-size:10px;opacity:0.8">${scaleLabel}</span></div>
+                    <div class="grade-details">
+                        <div class="grade-student">${g.studentName}</div>
+                        <div class="grade-meta">${g.subject} • ${g.category} • ${formatDate(g.date)}</div>
+                    </div>
+                </div>
+            `}).join('');
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            const today = new Date();
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+
+            if (date.toDateString() === today.toDateString()) return 'Σήμερα';
+            if (date.toDateString() === yesterday.toDateString()) return 'Χθες';
+            
+            return date.toLocaleDateString('el-GR', { day: 'numeric', month: 'short' });
+        }
+
+        // ============== DELETE & EDIT GRADE ==============
+        function deleteGrade(id) {
+            if (confirm('Είστε σίγουροι ότι θέλετε να διαγράψετε αυτή τη βαθμολογία;')) {
+                grades = grades.filter(g => g.id !== id);
+                localStorage.setItem(GRADEBOOK_KEY, JSON.stringify(grades));
+                renderHistory();
+                renderRecentGrades();
+                updateLiveStats();
+                showToast('✓ Η βαθμολογία διαγράφηκε');
+                // Shadow sync delete to Google Sheets (best-effort)
+                try { syncToGoogleSheets({ id: id }, 'delete'); } catch (e) { console.warn(e); }
+            }
+        }
+
+        function editGrade(id) {
+            const grade = grades.find(g => g.id === id);
+            if (!grade) return;
+
+            // Open edit modal
+            const modal = document.getElementById('report-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalBody = document.getElementById('modal-body');
+
+            modalTitle.textContent = 'Επεξεργασία Βαθμού';
+            modalBody.innerHTML = `
+                <div class="edit-grade-info" style="background:#f8f5fc;padding:12px;border-radius:8px;margin-bottom:15px;">
+                    <strong>${grade.studentName}</strong><br>
+                    <span style="color:#666;font-size:12px;">${grade.className} • ${grade.subject} • ${grade.category}</span>
+                </div>
+                <div class="select-group">
+                    <label class="select-label">Ημερομηνία</label>
+                    <input type="date" class="custom-select date-input" id="edit-date" value="${grade.date.split('T')[0]}">
+                </div>
+                <div class="select-group">
+                    <label class="select-label">Βαθμός (${grade.scale === 100 ? '0-100' : '0-20'})</label>
+                    <input type="number" class="custom-select" id="edit-score" value="${grade.score}" 
+                           min="0" max="${grade.scale}" step="0.5" style="text-align:center;font-size:18px;font-weight:bold;">
+                </div>
+                <div class="select-group">
+                    <label class="select-label">Σχόλια</label>
+                    <textarea class="notes-input" id="edit-notes" rows="3">${grade.notes || ''}</textarea>
+                </div>
+                <button class="submit-btn" onclick="saveEditedGrade(${id})">
+                    <span>💾</span>
+                    <span>Αποθήκευση Αλλαγών</span>
+                </button>
+            `;
+
+            modal.classList.add('active');
+        }
+
+        function saveEditedGrade(id) {
+            const newDate = document.getElementById('edit-date').value;
+            const newScore = parseFloat(document.getElementById('edit-score').value);
+            const newNotes = document.getElementById('edit-notes').value;
+
+            if (!newDate || isNaN(newScore)) {
+                showToast('Παρακαλώ συμπληρώστε τα πεδία');
+                return;
+            }
+
+            const gradeIndex = grades.findIndex(g => g.id === id);
+            if (gradeIndex === -1) return;
+
+            grades[gradeIndex].date = new Date(newDate + 'T12:00:00').toISOString();
+            grades[gradeIndex].score = newScore;
+            grades[gradeIndex].notes = newNotes;
+
+            localStorage.setItem(GRADEBOOK_KEY, JSON.stringify(grades));
+            closeModal();
+            renderHistory();
+            renderRecentGrades();
+            updateLiveStats();
+            showToast('✓ Ο βαθμός ενημερώθηκε');
+            // Shadow sync update to Google Sheets (does not affect UI/reports)
+            try { syncToGoogleSheets(grades[gradeIndex], 'update'); } catch (e) { console.warn(e); }
+        }
+
+        // ============== NAVIGATION ==============
+        function showView(viewName) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+            const viewElement = document.getElementById(`${viewName}-view`);
+            if (viewElement) {
+                viewElement.classList.add('active');
+            }
+
+            // Find and activate the correct nav button
+            const navIndex = { 'grading': 0, 'student-card': 1, 'history': 2, 'reports': 3 };
+            const navItems = document.querySelectorAll('.nav-item');
+            if (navItems[navIndex[viewName]]) {
+                navItems[navIndex[viewName]].classList.add('active');
+            }
+
+            // Refresh data when switching views
+            if (viewName === 'history') {
+                renderHistory();
+            } else if (viewName === 'student-card') {
+                // Reset student card if no student selected
+                const cardStudent = document.getElementById('card-student');
+                if (cardStudent && cardStudent.value) {
+                    loadStudentCard();
+                }
+            } else if (viewName === 'grading') {
+                renderRecentGrades();
+                updateLiveStats();
+            }
+        }
+
+        
+        // --- Reports must always use the latest persisted grades (not the currently rendered History list) ---
+        function getGradesForReports() {
+            let g = [];
+            try { g = JSON.parse(localStorage.getItem(GRADEBOOK_KEY) || '[]'); } catch (e) { g = []; }
+            if (!Array.isArray(g)) g = [];
+            // Prefer the larger set (guards against stale in-memory state on mobile)
+            try {
+                if (Array.isArray(window.grades) && window.grades.length > g.length) g = window.grades;
+            } catch (e) {}
+            return g;
+        }
+
+function showReports() {
+            showView('reports');
+        }
+
+        // ============== HISTORY ==============
+        function renderHistory() {            const container = document.getElementById('history-list');
+            const filter = document.getElementById('history-class-filter').value;
+            const hidden = getHiddenHistoryIds_();
+
+            let filteredGrades = filter
+                ? grades.filter(g => g.classId === filter && !hidden.has(String(g.id)))
+                : grades.filter(g => !hidden.has(String(g.id)));
+
+
+            if (filteredGrades.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📋</div>
+                        <div class="empty-text">Δεν βρέθηκαν βαθμολογήσεις</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filteredGrades.map(g => {
+                const scaleLabel = g.scale === 100 ? '/100' : '/20';
+                return `
+                <div class="grade-item" data-id="${g.id}">
+                    <div class="grade-score-badge">${g.score}<span style="font-size:10px;opacity:0.8">${scaleLabel}</span></div>
+                    <div class="grade-details">
+                        <div class="grade-student">${g.studentName}</div>
+                        <div class="grade-meta">${g.className}<br>${g.subject} • ${g.category} • ${formatDate(g.date)}</div>
+                        ${g.notes ? `<div class="grade-meta" style="margin-top:4px;font-style:italic;">"${g.notes.substring(0,50)}${g.notes.length > 50 ? '...' : ''}"</div>` : ''}
+                    </div>
+                    <div class="grade-actions">
+                        <button class="action-btn edit-btn" onclick="editGrade(${g.id})" title="Επεξεργασία">✏️</button>
+                        <button class="action-btn delete-btn" onclick="hideHistoryGrade(${g.id})" title="Απόκρυψη από ιστορικό">🗑️</button>
+                    </div>
+                </div>
+            `}).join('');
+        }
+
+        function filterHistory() {
+            renderHistory();
+        }
+
+        // ============== STUDENT CARD ==============
+        let finalGrades = JSON.parse(localStorage.getItem('bizou_final_grades') || '{}');
+
+        function updateCardStudents() {
+            const classId = document.getElementById('card-class').value;
+            const studentSelect = document.getElementById('card-student');
+            
+            studentSelect.innerHTML = '<option value="">Επιλέξτε μαθητή...</option>';
+            document.getElementById('student-card-content').innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">👤</div>
+                    <div class="empty-text">Επιλέξτε μαθητή για να δείτε την καρτέλα του</div>
+                </div>
+            `;
+            
+            if (classId) {
+                studentSelect.disabled = false;
+                const classStudents = students
+                    .filter(s => s.classId === classId)
+                    .sort((a, b) => a.name.localeCompare(b.name, 'el'));
+                
+                classStudents.forEach(s => {
+                    studentSelect.innerHTML += `<option value="${s.regNo}">${s.name}</option>`;
+                });
+            } else {
+                studentSelect.disabled = true;
+            }
+        }
+
+        function loadStudentCard() {
+            const classId = document.getElementById('card-class').value;
+            const studentRegNo = document.getElementById('card-student').value;
+            const container = document.getElementById('student-card-content');
+
+            if (!classId || !studentRegNo) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">👤</div>
+                        <div class="empty-text">Επιλέξτε μαθητή για να δείτε την καρτέλα του</div>
+                    </div>
+                `;
+                return;
+            }
+
+            const student = students.find(s => s.regNo === studentRegNo && s.classId === classId);
+            const className = classes.find(c => c.id === classId)?.name;
+            const studentGrades = grades.filter(g => g.studentRegNo === studentRegNo && g.classId === classId);
+
+            // Final grades key
+            const finalKey = `${classId}_${studentRegNo}`;
+
+            container.innerHTML = `
+                <div class="student-card-header">
+                    <div class="student-card-name">${student.name}</div>
+                    <div class="student-card-class">${className} • Σχολικό Έτος 2025-2026</div>
+                </div>
+
+                ${subjects.map(subject => {
+                    const subjectGrades = studentGrades.filter(g => g.subject === subject);
+                    
+                    // Filter by period
+                    const trimesterGrades = subjectGrades.filter(g => {
+                        const gDate = new Date(g.date);
+                        return gDate >= new Date('2025-09-01') && gDate <= new Date('2025-12-31') && g.category !== 'ΕΞΕΤΑΣΕΙΣ';
+                    });
+                    
+                    const tetramesterGrades = subjectGrades.filter(g => {
+                        const gDate = new Date(g.date);
+                        return gDate >= new Date('2026-01-01') && gDate <= new Date('2026-05-31') && g.category !== 'ΕΞΕΤΑΣΕΙΣ';
+                    });
+
+                    const examGrades = subjectGrades.filter(g => g.category === 'ΕΞΕΤΑΣΕΙΣ');
+
+                    // Calculate averages
+                    const calcAvg = (arr) => {
+                        if (arr.length === 0) return '-';
+                        const normalized = arr.map(g => g.scale === 100 ? g.score / 5 : g.score);
+                        return (normalized.reduce((a, b) => a + b, 0) / normalized.length).toFixed(1);
+                    };
+
+                    const trimesterAvg = calcAvg(trimesterGrades);
+                    const tetramesterAvg = calcAvg(tetramesterGrades);
+                    const examScore = examGrades.length > 0 ? examGrades[examGrades.length - 1].score : '-';
+
+                    // Get saved final grades
+                    const savedTrimester = finalGrades[`${finalKey}_${subject}_trimester`] || '';
+                    const savedTetramester = finalGrades[`${finalKey}_${subject}_tetramester`] || '';
+                    const savedYear = finalGrades[`${finalKey}_${subject}_year`] || '';
+
+                    const subjectId = subject.replace(/\s/g, '_');
+
+                    return `
+                        <div class="subject-card">
+                            <div class="subject-header">
+                                <span class="subject-name">${subject}</span>
+                            </div>
+                            
+                            <!-- Α΄ Τρίμηνο -->
+                            <div class="period-section">
+                                <div class="period-header">
+                                    <span class="period-title">Α΄ ΤΡΙΜΗΝΟ</span>
+                                    <span class="period-avg">Μ.Ο.: ${trimesterAvg}</span>
+                                </div>
+                                <div class="period-grades">
+                                    ${trimesterGrades.length > 0 ? `
+                                        <div class="grades-list">
+                                            ${groupGradesByCategory(trimesterGrades)}
+                                        </div>
+                                    ` : '<div class="no-grades-text">Δεν υπάρχουν βαθμοί</div>'}
+                                </div>
+                                <div class="period-final">
+                                    <span>Βαθμός Τριμήνου:</span>
+                                    <input type="number" class="final-grade-input small" 
+                                           id="final-${subjectId}-trimester"
+                                           value="${savedTrimester}"
+                                           min="0" max="20" step="0.5" placeholder="—">
+                                </div>
+                            </div>
+
+                            <!-- Β΄ Τετράμηνο -->
+                            <div class="period-section">
+                                <div class="period-header">
+                                    <span class="period-title">Β΄ ΤΕΤΡΑΜΗΝΟ</span>
+                                    <span class="period-avg">Μ.Ο.: ${tetramesterAvg}</span>
+                                </div>
+                                <div class="period-grades">
+                                    ${tetramesterGrades.length > 0 ? `
+                                        <div class="grades-list">
+                                            ${groupGradesByCategory(tetramesterGrades)}
+                                        </div>
+                                    ` : '<div class="no-grades-text">Δεν υπάρχουν βαθμοί</div>'}
+                                </div>
+                                <div class="period-final">
+                                    <span>Βαθμός Τετραμήνου:</span>
+                                    <input type="number" class="final-grade-input small" 
+                                           id="final-${subjectId}-tetramester"
+                                           value="${savedTetramester}"
+                                           min="0" max="20" step="0.5" placeholder="—">
+                                </div>
+                            </div>
+
+                            <!-- Εξετάσεις -->
+                            <div class="period-section exam-section">
+                                <div class="period-header exam-header">
+                                    <span class="period-title">ΕΞΕΤΑΣΕΙΣ</span>
+                                    <span class="exam-score">${examScore !== '-' ? examScore : '—'}</span>
+                                </div>
+                            </div>
+
+                            <!-- Τελικός Βαθμός Έτους -->
+                            <div class="year-final-section">
+                                <span class="year-final-label">ΤΕΛΙΚΟΣ ΒΑΘΜΟΣ ΕΤΟΥΣ</span>
+                                <input type="number" class="final-grade-input large" 
+                                       id="final-${subjectId}-year"
+                                       value="${savedYear}"
+                                       min="0" max="20" step="0.5" placeholder="—">
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+
+                <button class="save-finals-btn" onclick="saveFinalGrades()">
+                    💾 Αποθήκευση Όλων των Βαθμών
+                </button>
+            `;
+        }
+
+        function groupGradesByCategory(gradesArr) {
+            const byCategory = {};
+            gradesArr.forEach(g => {
+                if (!byCategory[g.category]) byCategory[g.category] = [];
+                byCategory[g.category].push(g);
+            });
+
+            return Object.entries(byCategory).map(([cat, catGrades]) => `
+                <div class="category-row">
+                    <span class="category-name">${cat}</span>
+                    <div class="category-grades">
+                        ${catGrades.map(g => `
+                            <div class="grade-chip">
+                                <span class="grade-chip-score">${g.score}${g.scale === 100 ? '/100' : ''}</span>
+                                <span class="grade-chip-date">${new Date(g.date).toLocaleDateString('el-GR', {day:'numeric', month:'short'})}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+function saveFinalGrades() {
+            const studentRegNo = document.getElementById('cardStudentSelect').value;
+            const classId = document.getElementById('cardClassSelect').value;
+            if (!studentRegNo || !classId) { showToast('⚠ Επιλέξτε τάξη και μαθητή/τρια'); return; }
+
+            const finals = loadFinalGrades_();
+            if (!finals[studentRegNo]) finals[studentRegNo] = {};
+
+            const cls = classes.find(c => c.id === classId);
+            const stu = students.find(s => s.regNo === studentRegNo);
+            const className = cls ? cls.name : classId;
+            const studentName = stu ? stu.name : studentRegNo;
+
+            // 1) Save to local "final grades" cache (UI card)
+            // 2) Mirror each entered final grade into the main Gradebook (DB) + Google Sheets sync
+            //    Reports MUST read from Gradebook only.
+            let wroteAny = false;
+
+            subjects.forEach(sub => {
+                const subjectId = sub.id;
+                const subjectName = sub.name;
+                periods.forEach(p => {
+                    const input = document.getElementById(`final_${subjectId}_${p.id}`);
+                    if (!input) return;
+                    const raw = (input.value || '').trim();
+                    // Keep empty values in UI cache, but do NOT write empty rows to DB
+                    if (!finals[studentRegNo][subjectId]) finals[studentRegNo][subjectId] = {};
+                    finals[studentRegNo][subjectId][p.id] = raw;
+
+                    if (raw === '') return;
+                    const score = parseFloat(raw);
+                    if (Number.isNaN(score)) return;
+
+                    wroteAny = true;
+
+                    // Deterministic ID: 1 row per (student, subject, period)
+                    const gid = `FINAL_${classId}_${studentRegNo}_${subjectId}_${p.id}`;
+
+                    const dateStr = (p && p.end) ? p.end : new Date().toISOString().slice(0,10);
+                    const gradeRow = {
+                        id: gid,
+                        classId,
+                        className,
+                        studentRegNo,
+                        studentName,
+                        subjectId,
+                        subject: subjectName,
+                        categoryId: 'final_manual',
+                        category: `Τελικός Βαθμός (${p.name})`,
+                        score: score,
+                        scale: 20,
+                        notes: 'FINAL_MANUAL',
+                        date: dateStr,
+                        synced: false,
+                        // keep for UI: these rows do NOT need to appear in History unless you want them
+                        hideFromHistory: true
+                    };
+
+                    // Upsert into Gradebook (grades array is the Gradebook in-memory cache)
+                    const idx = grades.findIndex(g => String(g.id) === String(gid));
+                    const action = (idx >= 0) ? 'update' : 'create';
+                    if (idx >= 0) {
+                        grades[idx] = { ...grades[idx], ...gradeRow, synced: false };
+                    } else {
+                        grades.push(gradeRow);
+                    }
+
+                    // Persist Gradebook + trigger sync
+                    try { saveGradebook_(); } catch(e) {}
+                    try { syncToGoogleSheets(gradeRow, action); } catch(e) {}
+                });
+            });
+
+            try { localStorage.setItem(FINAL_GRADES_KEY, JSON.stringify(finals)); } catch(e) {}
+
+            showToast(wroteAny ? '✓ Αποθηκεύτηκαν οι τελικοί βαθμοί (και γράφτηκαν στη βάση)' : '✓ Αποθηκεύτηκαν οι τελικοί βαθμοί');
+        }
+
+        // ============== REPORTS ==============
+        function generateReport(type) {
+            const modal = document.getElementById('report-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalBody = document.getElementById('modal-body');
+
+            if (type === 'student') {
+                modalTitle.textContent = 'Επιλέξτε Μαθητή';
+                modalBody.innerHTML = `
+                    <div class="select-group">
+                        <label class="select-label">Τάξη</label>
+                        <div class="select-wrapper">
+                            <select class="custom-select" id="report-class" onchange="updateReportStudents()">
+                                <option value="">Επιλέξτε τάξη...</option>
+                                ${classes.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
+                            </select>
+                            <span class="select-arrow">▼</span>
+                        </div>
+                    </div>
+                    <div class="select-group">
+                        <label class="select-label">Μαθητής</label>
+                        <div class="select-wrapper">
+                            <select class="custom-select" id="report-student" disabled>
+                                <option value="">Επιλέξτε πρώτα τάξη...</option>
+                            </select>
+                            <span class="select-arrow">▼</span>
+                        </div>
+                    </div>
+                    <button class="submit-btn" onclick="createStudentReport()">
+                        <span>📄</span>
+                        <span>Δημιουργία PDF</span>
+                    </button>
+                `;
+            } else if (type === 'studentGrid') {
+                modalTitle.textContent = 'Ατομικό Δελτίο (Landscape)';
+                modalBody.innerHTML = `
+                    <div class="select-group">
+                        <label class="select-label">Τάξη</label>
+                        <div class="select-wrapper">
+                            <select class="custom-select" id="report-class-grid-student" onchange="updateReportStudentsGrid()">
+                                <option value="">Επιλέξτε τάξη...</option>
+                                ${classes.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
+                            </select>
+                            <span class="select-arrow">▼</span>
+                        </div>
+                    </div>
+                    <div class="select-group">
+                        <label class="select-label">Μαθητής</label>
+                        <div class="select-wrapper">
+                            <select class="custom-select" id="report-student-grid" disabled>
+                                <option value="">Επιλέξτε πρώτα τάξη...</option>
+                            </select>
+                            <span class="select-arrow">▼</span>
+                        </div>
+                    </div>
+                    <button class="submit-btn" onclick="createStudentGridReport()">
+                        <span>📋</span>
+                        <span>Δημιουργία PDF (Landscape)</span>
+                    </button>
+                `;
+	            } else if (type === 'studentFinal') {
+	                modalTitle.textContent = 'Καρτέλα Μαθητή - Τελικοί Βαθμοί';
+	                modalBody.innerHTML = `
+	                    <div class="select-group">
+	                        <label class="select-label">Τάξη</label>
+	                        <div class="select-wrapper">
+	                            <select class="custom-select" id="report-class-final-student" onchange="updateStudentsInReports('finalStudent')">
+	                                <option value="">Επιλέξτε τάξη...</option>
+	                                ${classes.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
+	                            </select>
+	                            <span class="select-arrow">▼</span>
+	                        </div>
+	                    </div>
+	                    <div class="select-group">
+	                        <label class="select-label">Μαθητής/τρια</label>
+	                        <div class="select-wrapper">
+	                            <select class="custom-select" id="report-student-final">
+	                                <option value="">Επιλέξτε πρώτα τάξη...</option>
+	                            </select>
+	                            <span class="select-arrow">▼</span>
+	                        </div>
+	                    </div>
+	                    <button class="submit-btn" onclick="createStudentFinalReport()">
+	                        <span>✅</span>
+	                        <span>Δημιουργία PDF</span>
+	                    </button>
+	                `;
+            } else if (type === 'class') {
+                modalTitle.textContent = 'Κατάσταση Τάξης';
+                modalBody.innerHTML = `
+                    <div class="select-group">
+                        <label class="select-label">Τάξη</label>
+                        <div class="select-wrapper">
+                            <select class="custom-select" id="report-class-only">
+                                <option value="">Επιλέξτε τάξη...</option>
+                                ${classes.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
+                            </select>
+                            <span class="select-arrow">▼</span>
+                        </div>
+                    </div>
+                    <button class="submit-btn" onclick="createClassReport()">
+                        <span>📊</span>
+                        <span>Δημιουργία PDF</span>
+                    </button>
+                `;
+            } else if (type === 'classGrid') {
+                modalTitle.textContent = 'Πίνακας Τμήματος (Landscape)';
+                modalBody.innerHTML = `
+                    <div class="select-group">
+                        <label class="select-label">Τάξη</label>
+                        <div class="select-wrapper">
+                            <select class="custom-select" id="report-class-grid">
+                                <option value="">Επιλέξτε τάξη...</option>
+                                ${classes.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
+                            </select>
+                            <span class="select-arrow">▼</span>
+                        </div>
+                    </div>
+                    <div class="select-group">
+                        <label class="select-label">Μάθημα</label>
+                        <div class="select-wrapper">
+                            <select class="custom-select" id="report-subject-grid">
+                                <option value="">Όλα τα μαθήματα</option>
+                                ${subjects.map(s => `<option value="${s}">${s}</option>`).join('')}
+                            </select>
+                            <span class="select-arrow">▼</span>
+                        </div>
+                    </div>
+                    <button class="submit-btn" onclick="createClassGridReport()">
+                        <span>📋</span>
+                        <span>Δημιουργία PDF (Landscape)</span>
+                    </button>
+                `;
+	            } else if (type === 'classFinal') {
+	                modalTitle.textContent = 'Καρτέλα Ανά Τάξη - Τελικοί Βαθμοί';
+	                modalBody.innerHTML = `
+	                    <div class="select-group">
+	                        <label class="select-label">Τάξη</label>
+	                        <div class="select-wrapper">
+	                            <select class="custom-select" id="report-class-final">
+	                                <option value="">Επιλέξτε τάξη...</option>
+	                                ${classes.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
+	                            </select>
+	                            <span class="select-arrow">▼</span>
+	                        </div>
+	                    </div>
+	                    <button class="submit-btn" onclick="createClassFinalReport()">
+	                        <span>✅</span>
+	                        <span>Δημιουργία PDF (Landscape)</span>
+	                    </button>
+	                `;
+            } else {
+                modalTitle.textContent = 'Αναφορά Περιόδου';
+                modalBody.innerHTML = `
+                    <div class="select-group">
+                        <label class="select-label">Περίοδος</label>
+                        <div class="select-wrapper">
+                            <select class="custom-select" id="report-period">
+                                <option value="1">Α΄ Τρίμηνο (Σεπ-Δεκ)</option>
+                                <option value="2">Β΄ Τετράμηνο (Ιαν-Μάι)</option>
+                            </select>
+                            <span class="select-arrow">▼</span>
+                        </div>
+                    </div>
+                    <button class="submit-btn" onclick="createPeriodReport()">
+                        <span>📅</span>
+                        <span>Δημιουργία PDF</span>
+                    </button>
+                `;
+            }
+
+            modal.classList.add('active');
+        }
+
+        function updateReportStudents() {
+            const classId = document.getElementById('report-class').value;
+            const studentSelect = document.getElementById('report-student');
+            
+            studentSelect.innerHTML = '<option value="">Επιλέξτε μαθητή...</option>';
+            
+            if (classId) {
+                studentSelect.disabled = false;
+                const classStudents = students
+                    .filter(s => s.classId === classId)
+                    .sort((a, b) => a.name.localeCompare(b.name, 'el'));
+                
+                classStudents.forEach(s => {
+                    studentSelect.innerHTML += `<option value="${s.regNo}">${s.name}</option>`;
+                });
+            } else {
+                studentSelect.disabled = true;
+            }
+        }
+
+        function updateReportStudentsGrid() {
+            const classId = document.getElementById('report-class-grid-student').value;
+            const studentSelect = document.getElementById('report-student-grid');
+            
+            studentSelect.innerHTML = '<option value="">Επιλέξτε μαθητή...</option>';
+            
+            if (classId) {
+                studentSelect.disabled = false;
+                const classStudents = students
+                    .filter(s => s.classId === classId)
+                    .sort((a, b) => a.name.localeCompare(b.name, 'el'));
+                
+                classStudents.forEach(s => {
+                    studentSelect.innerHTML += `<option value="${s.regNo}">${s.name}</option>`;
+                });
+            } else {
+                studentSelect.disabled = true;
+            }
+        }
+
+        function createStudentGridReport() {
+            const classId = document.getElementById('report-class-grid-student').value;
+            const studentRegNo = document.getElementById('report-student-grid').value;
+            
+            if (!classId || !studentRegNo) {
+                showToast('Επιλέξτε τάξη και μαθητή');
+                return;
+            }
+
+            
+            const reportGrades = getGradesForReports();
+const student = students.find(s => s.regNo === studentRegNo && s.classId === classId);
+            const className = classes.find(c => c.id === classId)?.name;
+            const studentGrades = reportGrades.filter(g => g.studentRegNo === studentRegNo && g.classId === classId);
+            const finalKey = `${classId}_${studentRegNo}`;
+
+            const calcAvg = (arr) => {
+                if (arr.length === 0) return '-';
+                const normalized = arr.map(g => g.scale === 100 ? g.score / 5 : g.score);
+                return (normalized.reduce((a, b) => a + b, 0) / normalized.length).toFixed(1);
+            };
+
+            // Categories without ΕΞΕΤΑΣΕΙΣ for period columns
+            const periodCategories = categories.filter(c => c !== 'ΕΞΕΤΑΣΕΙΣ');
+
+            // Build data for each subject
+            const subjectData = subjects.map(subject => {
+                const subjectGrades = studentGrades.filter(g => g.subject === subject);
+                
+                // Trimester grades by category
+                const trimesterGrades = subjectGrades.filter(g => {
+                    const gDate = new Date(g.date);
+                    return gDate >= new Date('2025-09-01') && gDate <= new Date('2025-12-31') && g.category !== 'ΕΞΕΤΑΣΕΙΣ';
+                });
+                
+                // Tetramester grades by category
+                const tetramesterGrades = subjectGrades.filter(g => {
+                    const gDate = new Date(g.date);
+                    return gDate >= new Date('2026-01-01') && gDate <= new Date('2026-05-31') && g.category !== 'ΕΞΕΤΑΣΕΙΣ';
+                });
+
+                // Exam grades
+                const examGrades = subjectGrades.filter(g => g.category === 'ΕΞΕΤΑΣΕΙΣ');
+
+                const row = { subject };
+                
+                // Trimester category averages
+                periodCategories.forEach(cat => {
+                    const catGrades = trimesterGrades.filter(g => g.category === cat);
+                    row[`tri_${cat}`] = calcAvg(catGrades);
+                });
+                row.tri_avg = calcAvg(trimesterGrades);
+                row.tri_final = finalGrades[`${finalKey}_${subject}_trimester`] || '-';
+
+                // Tetramester category averages
+                periodCategories.forEach(cat => {
+                    const catGrades = tetramesterGrades.filter(g => g.category === cat);
+                    row[`tet_${cat}`] = calcAvg(catGrades);
+                });
+                row.tet_avg = calcAvg(tetramesterGrades);
+                row.tet_final = finalGrades[`${finalKey}_${subject}_tetramester`] || '-';
+
+                // Exam and Year Final
+                row.exam = examGrades.length > 0 ? examGrades[examGrades.length - 1].score : '-';
+                row.year_final = finalGrades[`${finalKey}_${subject}_year`] || '-';
+
+                return row;
+            });
+
+            // Overall averages
+            const allTrimester = studentGrades.filter(g => {
+                const gDate = new Date(g.date);
+                return gDate >= new Date('2025-09-01') && gDate <= new Date('2025-12-31') && g.category !== 'ΕΞΕΤΑΣΕΙΣ';
+            });
+            const allTetramester = studentGrades.filter(g => {
+                const gDate = new Date(g.date);
+                return gDate >= new Date('2026-01-01') && gDate <= new Date('2026-05-31') && g.category !== 'ΕΞΕΤΑΣΕΙΣ';
+            });
+
+            const overallTrimesterAvg = calcAvg(allTrimester);
+            const overallTetramesterAvg = calcAvg(allTetramester);
+            
+            // Calculate overall year final from manual grades
+            const yearFinals = subjects.map(s => finalGrades[`${finalKey}_${s}_year`]).filter(v => v);
+            const overallYearFinal = yearFinals.length > 0 
+                ? (yearFinals.reduce((a, b) => a + b, 0) / yearFinals.length).toFixed(1) 
+                : '-';
+
+            // Generate landscape PDF
+            const reportWindow = window.open('', '_blank');
+            reportWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Ατομικό Δελτίο - ${student.name}</title>
+                    <style>
+                        @page { size: A4 landscape; margin: 8mm; }
+                        @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+                        * { margin: 0; padding: 0; box-sizing: border-box; }
+                        body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 8px; padding: 10px; }
+                        .header { text-align: center; margin-bottom: 10px; border-bottom: 2px solid #5B2C83; padding-bottom: 8px; }
+                        .header h1 { color: #5B2C83; font-size: 14px; margin-bottom: 3px; }
+                        .student-box { background: #5B2C83; color: white; padding: 8px 15px; border-radius: 6px; margin-bottom: 10px; display: flex; justify-content: space-between; }
+                        .student-name { font-size: 14px; font-weight: 700; }
+                        .student-meta { font-size: 10px; opacity: 0.9; }
+                        table { width: 100%; border-collapse: collapse; font-size: 7px; }
+                        th { background: #5B2C83; color: white; padding: 4px 2px; text-align: center; font-weight: 600; font-size: 6px; }
+                        th.period-title { background: #e8d5f2; color: #5B2C83; font-size: 8px; font-weight: 700; }
+                        th:first-child { text-align: left; min-width: 60px; }
+                        td { padding: 5px 2px; border-bottom: 1px solid #ddd; text-align: center; font-size: 7px; }
+                        td:first-child { text-align: left; font-weight: 500; background: #f8f5fc; font-size: 8px; }
+                        tr:nth-child(even) td:not(:first-child) { background: #fafafa; }
+                        .avg-col { background: #e8d5f2 !important; font-weight: 600; }
+                        .final-col { background: #d4c4e3 !important; font-weight: 700; color: #5B2C83; }
+                        .exam-col { background: #fff3cd !important; color: #856404; font-weight: 600; }
+                        .year-col { background: #5B2C83 !important; color: white !important; font-weight: 700; }
+                        .summary { display: flex; justify-content: center; gap: 20px; margin-top: 10px; padding: 10px; background: #f8f5fc; border-radius: 6px; }
+                        .summary-item { text-align: center; }
+                        .summary-value { font-size: 20px; font-weight: 700; color: #5B2C83; }
+                        .summary-value.final { background: #5B2C83; color: white; padding: 5px 15px; border-radius: 6px; }
+                        .summary-label { font-size: 8px; color: #666; }
+                        .footer { margin-top: 8px; text-align: right; font-size: 7px; color: #666; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>ΜΟΥΣΙΚΟ ΣΧΟΛΕΙΟ ΛΕΥΚΑΔΑΣ - Ατομικό Δελτίο Προόδου</h1>
+                    </div>
+
+                    <div class="student-box">
+                        <div>
+                            <div class="student-name">${student.name}</div>
+                            <div class="student-meta">${className} • Αρ. Μητρώου: ${student.regNo}</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div class="student-meta">Σχολικό Έτος 2025-2026</div>
+                            <div class="student-meta">${new Date().toLocaleDateString('el-GR')}</div>
+                        </div>
+                    </div>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th rowspan="2">ΜΑΘΗΜΑ</th>
+                                <th colspan="${periodCategories.length + 2}" class="period-title">Α΄ ΤΡΙΜΗΝΟ</th>
+                                <th colspan="${periodCategories.length + 2}" class="period-title">Β΄ ΤΕΤΡΑΜΗΝΟ</th>
+                                <th rowspan="2" class="exam-col">ΕΞΕΤ.</th>
+                                <th rowspan="2" class="year-col">ΤΕΛΙΚΟΣ</th>
+                            </tr>
+                            <tr>
+                                ${periodCategories.map(c => `<th>${c.substring(0,4)}</th>`).join('')}
+                                <th class="avg-col">Μ.Ο.Μ.</th>
+                                <th class="final-col">Βαθμ.</th>
+                                ${periodCategories.map(c => `<th>${c.substring(0,4)}</th>`).join('')}
+                                <th class="avg-col">Μ.Ο.Μ.</th>
+                                <th class="final-col">Βαθμ.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${subjectData.map(row => `
+                                <tr>
+                                    <td>${row.subject}</td>
+                                    ${periodCategories.map(c => `<td>${row[`tri_${c}`]}</td>`).join('')}
+                                    <td class="avg-col">${row.tri_avg}</td>
+                                    <td class="final-col">${row.tri_final}</td>
+                                    ${periodCategories.map(c => `<td>${row[`tet_${c}`]}</td>`).join('')}
+                                    <td class="avg-col">${row.tet_avg}</td>
+                                    <td class="final-col">${row.tet_final}</td>
+                                    <td class="exam-col">${row.exam}</td>
+                                    <td class="year-col">${row.year_final}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+
+                    <div class="summary">
+                        <div class="summary-item">
+                            <div class="summary-value">${overallTrimesterAvg}</div>
+                            <div class="summary-label">Μ.Ο. ΜΑΘΗΤΗ ΤΡΙΜΗΝΟΥ</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-value">${overallTetramesterAvg}</div>
+                            <div class="summary-label">Μ.Ο. ΜΑΘΗΤΗ ΤΕΤΡΑΜΗΝΟΥ</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-value final">${overallYearFinal}</div>
+                            <div class="summary-label">ΤΕΛΙΚΟΣ ΒΑΘΜΟΣ ΕΤΟΥΣ</div>
+                        </div>
+                    </div>
+
+                    <div class="footer">
+                        Εκτυπώθηκε: ${new Date().toLocaleString('el-GR')} | Βαθμολόγιο - Μπίζου Διονυσία
+                    </div>
+                    <script>window.print();<\/script>
+                </body>
+                </html>
+            `);
+            reportWindow.document.close();
+            
+            showToast('✓ Το δελτίο δημιουργήθηκε!');
+            closeModal();
+        }
+
+        // =================================================
+        // FINAL GRADES ONLY REPORTS (Manual finals from Student Card)
+        // =================================================
+        function createStudentFinalReport() {
+            const classId = document.getElementById('report-class-grid-student')?.value;
+            const studentRegNo = document.getElementById('report-student-grid')?.value;
+            if (!classId || !studentRegNo) {
+                showToast('Επιλέξτε τάξη και μαθητή');
+                return;
+            }
+
+            const student = students.find(s => s.regNo === studentRegNo && s.classId === classId);
+            const className = classes.find(c => c.id === classId)?.name || '';
+            const finalKey = `${classId}_${studentRegNo}`;
+
+            const rows = subjects.map(subject => {
+                const t = finalGrades[`${finalKey}_${subject}_trimester`] || '-';
+                const tet = finalGrades[`${finalKey}_${subject}_tetramester`] || '-';
+                const ex = finalGrades[`${finalKey}_${subject}_exams`] || '-';
+                const y = finalGrades[`${finalKey}_${subject}_year`] || '-';
+                return { subject, t, tet, ex, y };
+            }).filter(r => (r.t !== '-' || r.tet !== '-' || r.ex !== '-' || r.y !== '-'));
+
+            const yearNums = rows.map(r => parseFloat(String(r.y).replace(',', '.'))).filter(n => !isNaN(n));
+            const overallYear = yearNums.length ? (yearNums.reduce((a,b)=>a+b,0)/yearNums.length).toFixed(1) : '-';
+
+            const w = window.open('', '_blank');
+            w.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Τελικοί Βαθμοί - ${student?.name || ''}</title>
+                    <style>
+                        @page { size: A4; margin: 12mm; }
+                        @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+                        body { font-family: 'Segoe UI', Arial, sans-serif; color: #222; padding: 12px; }
+                        .header { text-align:center; border-bottom: 3px solid #5B2C83; padding-bottom: 10px; margin-bottom: 12px; }
+                        .header h1 { margin: 0; color:#5B2C83; font-size: 18px; }
+                        .meta { margin-top: 6px; color:#555; font-size: 12px; }
+                        .box { background:#f8f5fc; border-radius:10px; padding:10px 12px; margin-bottom: 12px; }
+                        .box b { color:#5B2C83; }
+                        table { width: 100%; border-collapse: collapse; font-size: 12px; }
+                        th { background:#e8d5f2; color:#5B2C83; text-align:left; padding:8px; }
+                        td { border-bottom: 1px solid #eee; padding:8px; }
+                        tr:nth-child(even) td { background:#fafafa; }
+                        .right { text-align:right; }
+                        .summary { display:flex; justify-content:flex-end; margin-top: 10px; }
+                        .pill { background:#5B2C83; color:#fff; padding:10px 12px; border-radius: 999px; font-weight:700; }
+                        .footer { margin-top: 12px; color:#777; font-size: 10px; text-align:center; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>Καρτέλα Μαθητή - Τελικοί Βαθμοί</h1>
+                        <div class="meta">${className} | ${student?.name || ''} (${studentRegNo})</div>
+                    </div>
+
+                    <div class="box">
+                        <div><b>Σημείωση:</b> Η εκτύπωση αφορά τους χειροκίνητους τελικούς βαθμούς (καρτέλα μαθητή).</div>
+                    </div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Μάθημα</th>
+                                <th class="right">Τρίμηνο</th>
+                                <th class="right">Τετράμηνο</th>
+                                <th class="right">Εξετάσεις</th>
+                                <th class="right">Τελικός Έτους</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${rows.map(r => `
+                                <tr>
+                                    <td>${r.subject}</td>
+                                    <td class="right">${r.t}</td>
+                                    <td class="right">${r.tet}</td>
+                                    <td class="right">${r.ex}</td>
+                                    <td class="right"><b>${r.y}</b></td>
+                                </tr>
+                            `).join('') || `<tr><td colspan="5" style="text-align:center;color:#777;padding:16px;">Δεν βρέθηκαν τελικοί βαθμοί.</td></tr>`}
+                        </tbody>
+                    </table>
+
+                    <div class="summary">
+                        <div class="pill">Μ.Ο. Τελικού Έτους: ${overallYear}</div>
+                    </div>
+
+                    <div class="footer">Εκτυπώθηκε: ${new Date().toLocaleString('el-GR')} | Βαθμολόγιο - Μπίζου Διονυσία</div>
+                    <script>window.print();</script>
+                </body>
+                </html>
+            `);
+            w.document.close();
+
+            showToast('✓ Η καρτέλα τελικών βαθμών δημιουργήθηκε!');
+            closeModal();
+        }
+
+        function createClassFinalReport() {
+          const classId = document.getElementById('report-class-final').value;
+          if (!classId) { showToast('Επιλέξτε τάξη'); return; }
+
+          const className = (classes.find(c => c.id === classId) || {}).name || '';
+          const classStudents = students.filter(s => s.classId === classId);
+
+          // Build per-student, per-subject year finals
+          const data = classStudents.map(st => {
+            const finalKey = `${classId}_${st.regNo}`;
+            const perSubject = {};
+            let nums = [];
+            subjects.forEach(sub => {
+              const y = finalGrades[`${finalKey}_${sub}_year`];
+              perSubject[sub] = (y == null || y === '') ? '-' : String(y);
+              const n = parseFloat(String(y).replace(',', '.'));
+              if (!isNaN(n)) nums.push(n);
+            });
+            const avg = nums.length ? (nums.reduce((a,b)=>a+b,0)/nums.length).toFixed(1) : '-';
+            return { regNo: st.regNo, name: st.name, avg, perSubject };
+          });
+
+          const escapeHtml = (s) => String(s)
+            .replace(/&/g,'&amp;')
+            .replace(/</g,'&lt;')
+            .replace(/>/g,'&gt;')
+            .replace(/"/g,'&quot;')
+            .replace(/'/g,'&#39;');
+
+          const headerCells = subjects.map(s => `<th>${escapeHtml(s)}</th>`).join('');
+
+          const rowsHtml = data.length
+            ? data.map(r => {
+                const subjectCells = subjects.map(s => `<td>${escapeHtml(r.perSubject[s] || '-')}</td>`).join('');
+                return `<tr><td>${escapeHtml(r.regNo)}</td><td>${escapeHtml(r.name)}</td>${subjectCells}<td class="avg">${escapeHtml(r.avg)}</td></tr>`;
+              }).join('')
+            : `<tr><td colspan="${3 + subjects.length}" style="text-align:center; padding: 16px;">Δεν βρέθηκαν μαθητές/τελικοί βαθμοί.</td></tr>`;
+
+          const w = window.open('', '_blank');
+          if (!w) { alert('Pop-up blocked. Επίτρεψε pop-ups για να ανοίξουν οι εκτυπώσεις.'); return; }
+
+          w.document.write(`
+            <html><head><meta charset="utf-8"><title>Καρτέλα ανά Τάξη (Τελικοί)</title>
+            <style>
+              body{font-family:Manrope,Arial,sans-serif; padding:24px;}
+              h1{margin:0; font-size:20px; color:#4B2C83;}
+              h2{margin:6px 0 18px; font-size:14px; font-weight:400; color:#555;}
+              table{width:100%; border-collapse:collapse; font-size:12px;}
+              th,td{border:1px solid #ddd; padding:6px;}
+              th{background:#eadcf7; color:#4B2C83;}
+              .avg{font-weight:700; color:#2e7d32;}
+              .footer{margin-top:16px; font-size:11px; color:#777;}
+              @media print { body{padding:0} }
+            </style></head>
+            <body>
+              <h1>Καρτέλα Ανά Τάξη — Τελικοί Βαθμοί (Έτους)</h1>
+              <h2>${escapeHtml(className)} | Χειροκίνητοι τελικοί βαθμοί (καρτέλα μαθητή)</h2>
+              <table>
+                <thead>
+                  <tr><th>Α.Μ.</th><th>Μαθητής</th>${headerCells}<th>Μ.Ο.</th></tr>
+                </thead>
+                <tbody>
+                  ${rowsHtml}
+                </tbody>
+              </table>
+              <div class="footer">Εκτυπώθηκε: ${new Date().toLocaleString('el-GR')} | Βαθμολόγιο - Μπίζου Διονυσία</div>
+              <script>window.print();</script>
+            </body></html>
+          `);
+          w.document.close();
+          showToast('✓ Η καρτέλα τάξης (τελικοί) δημιουργήθηκε!');
+          closeModal();
+        }
+
+function createStudentReport() {
+            const classId = document.getElementById('report-class').value;
+            const studentRegNo = document.getElementById('report-student').value;
+            
+            if (!classId || !studentRegNo) {
+                showToast('Επιλέξτε τάξη και μαθητή');
+                return;
+            }
+
+            
+            const reportGrades = getGradesForReports();
+const student = students.find(s => s.regNo === studentRegNo && s.classId === classId);
+            const className = classes.find(c => c.id === classId)?.name;
+            const studentGrades = reportGrades.filter(g => g.studentRegNo === studentRegNo && g.classId === classId);
+            const allClassGrades = reportGrades.filter(g => g.classId === classId);
+            const finalKey = `${classId}_${studentRegNo}`;
+            
+            // Helper function
+            const calcAvg = (arr) => {
+                if (arr.length === 0) return '-';
+                const normalized = arr.map(g => g.scale === 100 ? g.score / 5 : g.score);
+                return (normalized.reduce((a, b) => a + b, 0) / normalized.length).toFixed(1);
+            };
+
+            // Build detailed subject data with grades and notes
+            const subjectData = subjects.map(subject => {
+                const subjectGrades = studentGrades.filter(g => g.subject === subject);
+                const classSubjectGrades = allClassGrades.filter(g => g.subject === subject);
+                
+                // Group grades by category with dates and notes
+                const gradeDetails = [];
+                categories.forEach(cat => {
+                    const catGrades = subjectGrades.filter(g => g.category === cat);
+                    catGrades.forEach(g => {
+                        if (g.notes && g.notes.trim()) {
+                            gradeDetails.push({
+                                category: cat,
+                                date: new Date(g.date).toLocaleDateString('el-GR'),
+                                score: g.score + (g.scale === 100 ? '/100' : ''),
+                                notes: g.notes
+                            });
+                        }
+                    });
+                });
+
+                return {
+                    subject,
+                    studentAvg: calcAvg(subjectGrades.filter(g => g.category !== 'ΕΞΕΤΑΣΕΙΣ')),
+                    classAvg: calcAvg(classSubjectGrades.filter(g => g.category !== 'ΕΞΕΤΑΣΕΙΣ')),
+                    examScore: subjectGrades.filter(g => g.category === 'ΕΞΕΤΑΣΕΙΣ').length > 0 
+                        ? subjectGrades.filter(g => g.category === 'ΕΞΕΤΑΣΕΙΣ').slice(-1)[0].score 
+                        : '-',
+                    yearFinal: finalGrades[`${finalKey}_${subject}_year`] || '-',
+                    gradeDetails
+                };
+            });
+
+            // Overall averages
+            const overallStudentAvg = calcAvg(studentGrades.filter(g => g.category !== 'ΕΞΕΤΑΣΕΙΣ'));
+            const overallClassAvg = calcAvg(allClassGrades.filter(g => g.category !== 'ΕΞΕΤΑΣΕΙΣ'));
+
+            // Generate PDF
+            const reportWindow = window.open('', '_blank');
+            reportWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Ατομικό Δελτίο - ${student.name}</title>
+                    <style>
+                        @page { size: A4; margin: 12mm; }
+                        @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+                        * { margin: 0; padding: 0; box-sizing: border-box; }
+                        body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10px; padding: 15px; color: #333; }
+                        .header { text-align: center; border-bottom: 3px solid #5B2C83; padding-bottom: 12px; margin-bottom: 15px; }
+                        .header h1 { color: #5B2C83; font-size: 16px; margin-bottom: 5px; }
+                        .header h2 { color: #666; font-size: 12px; font-weight: normal; }
+                        .student-info { background: #f8f5fc; padding: 12px; border-radius: 8px; margin-bottom: 15px; }
+                        .student-info h3 { color: #5B2C83; font-size: 14px; margin-bottom: 8px; }
+                        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+                        .info-item { font-size: 10px; }
+                        .info-label { color: #666; }
+                        .info-value { font-weight: 600; }
+                        
+                        .subject-section { margin-bottom: 12px; page-break-inside: avoid; }
+                        .subject-header { background: #5B2C83; color: white; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; }
+                        .subject-name { font-weight: 700; font-size: 11px; }
+                        .subject-stats { display: flex; gap: 15px; font-size: 10px; }
+                        .stat-item { display: flex; flex-direction: column; align-items: center; }
+                        .stat-value { font-weight: 700; font-size: 14px; }
+                        .stat-label { font-size: 8px; opacity: 0.8; }
+                        
+                        .notes-table { width: 100%; border-collapse: collapse; font-size: 9px; }
+                        .notes-table th { background: #e8d5f2; color: #5B2C83; padding: 6px 8px; text-align: left; font-weight: 600; }
+                        .notes-table td { padding: 6px 8px; border-bottom: 1px solid #eee; }
+                        .notes-table tr:nth-child(even) { background: #fafafa; }
+                        .no-notes { color: #999; font-style: italic; padding: 10px; text-align: center; background: #fafafa; }
+                        
+                        .summary-section { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+                        .summary-box { background: #f8f5fc; padding: 12px; border-radius: 8px; text-align: center; }
+                        .summary-box.highlight { background: #5B2C83; color: white; }
+                        .summary-value { font-size: 20px; font-weight: 700; color: #5B2C83; }
+                        .summary-box.highlight .summary-value { color: white; }
+                        .summary-label { font-size: 9px; color: #666; margin-top: 3px; }
+                        .summary-box.highlight .summary-label { color: rgba(255,255,255,0.8); }
+                        .footer { margin-top: 15px; text-align: center; font-size: 8px; color: #999; border-top: 1px solid #eee; padding-top: 8px; }
+                        
+                        .exam-badge { background: #fff3cd; color: #856404; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+                        .final-badge { background: #5B2C83; color: white; padding: 2px 8px; border-radius: 10px; font-weight: 700; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>ΜΟΥΣΙΚΟ ΣΧΟΛΕΙΟ ΛΕΥΚΑΔΑΣ</h1>
+                        <h2>Ατομικό Δελτίο Προόδου Μαθητή</h2>
+                    </div>
+                    
+                    <div class="student-info">
+                        <h3>${student.name}</h3>
+                        <div class="info-grid">
+                            <div class="info-item"><span class="info-label">Τάξη:</span> <span class="info-value">${className}</span></div>
+                            <div class="info-item"><span class="info-label">Αρ. Μητρώου:</span> <span class="info-value">${student.regNo}</span></div>
+                            <div class="info-item"><span class="info-label">Σχολικό Έτος:</span> <span class="info-value">2025-2026</span></div>
+                            <div class="info-item"><span class="info-label">Ημερομηνία:</span> <span class="info-value">${new Date().toLocaleDateString('el-GR')}</span></div>
+                        </div>
+                    </div>
+
+                    ${subjectData.map(s => `
+                        <div class="subject-section">
+                            <div class="subject-header">
+                                <span class="subject-name">${s.subject}</span>
+                                <div class="subject-stats">
+                                    <div class="stat-item">
+                                        <span class="stat-value">${s.studentAvg}</span>
+                                        <span class="stat-label">Μ.Ο. Μαθητή</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-value">${s.classAvg}</span>
+                                        <span class="stat-label">Μ.Ο. Τάξης</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="exam-badge">${s.examScore}</span>
+                                        <span class="stat-label">Εξετάσεις</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="final-badge">${s.yearFinal}</span>
+                                        <span class="stat-label">Τελικός</span>
+                                    </div>
+                                </div>
+                            </div>
+                            ${s.gradeDetails.length > 0 ? `
+                                <table class="notes-table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:20%">Κατηγορία</th>
+                                            <th style="width:15%">Ημερομηνία</th>
+                                            <th style="width:10%">Βαθμός</th>
+                                            <th>Σχόλια</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${s.gradeDetails.map(d => `
+                                            <tr>
+                                                <td>${d.category}</td>
+                                                <td>${d.date}</td>
+                                                <td><strong>${d.score}</strong></td>
+                                                <td>${d.notes}</td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            ` : '<div class="no-notes">Δεν υπάρχουν σχόλια για αυτό το μάθημα</div>'}
+                        </div>
+                    `).join('')}
+
+                    <div class="summary-section">
+                        <div class="summary-box">
+                            <div class="summary-value">${overallStudentAvg}</div>
+                            <div class="summary-label">ΓΕΝΙΚΟΣ Μ.Ο. ΜΑΘΗΤΗ</div>
+                        </div>
+                        <div class="summary-box">
+                            <div class="summary-value">${overallClassAvg}</div>
+                            <div class="summary-label">ΓΕΝΙΚΟΣ Μ.Ο. ΤΑΞΗΣ</div>
+                        </div>
+                        <div class="summary-box highlight">
+                            <div class="summary-value">${parseFloat(overallStudentAvg) > parseFloat(overallClassAvg) ? '↑' : parseFloat(overallStudentAvg) < parseFloat(overallClassAvg) ? '↓' : '='}</div>
+                            <div class="summary-label">ΣΥΓΚΡΙΣΗ</div>
+                        </div>
+                    </div>
+
+                    <div class="footer">
+                        Εκτυπώθηκε: ${new Date().toLocaleString('el-GR')} | Βαθμολόγιο - Μπίζου Διονυσία
+                    </div>
+                    <script>window.print();<\/script>
+                </body>
+                </html>
+            `);
+            reportWindow.document.close();
+            
+            showToast('✓ Το δελτίο δημιουργήθηκε!');
+            closeModal();
+        }
+
+        function createClassReport() {
+            const classId = document.getElementById('report-class-only').value;
+            if (!classId) {
+                showToast('Επιλέξτε τάξη');
+                return;
+            }
+
+            
+            const reportGrades = getGradesForReports();
+const className = classes.find(c => c.id === classId)?.name;
+            const classStudents = students
+                .filter(s => s.classId === classId)
+                .sort((a, b) => a.name.localeCompare(b.name, 'el'));
+            
+            const allClassGrades = reportGrades.filter(g => g.classId === classId);
+
+            const calcAvg = (arr) => {
+                if (arr.length === 0) return '-';
+                const normalized = arr.map(g => g.scale === 100 ? g.score / 5 : g.score);
+                return (normalized.reduce((a, b) => a + b, 0) / normalized.length).toFixed(1);
+            };
+
+            // Calculate CLASS averages (Μ.Ο. Τμήματος)
+            const classTrimesterGrades = allClassGrades.filter(g => {
+                const gDate = new Date(g.date);
+                return gDate >= new Date('2025-09-01') && gDate <= new Date('2025-12-31') && g.category !== 'ΕΞΕΤΑΣΕΙΣ';
+            });
+            const classTetramesterGrades = allClassGrades.filter(g => {
+                const gDate = new Date(g.date);
+                return gDate >= new Date('2026-01-01') && gDate <= new Date('2026-05-31') && g.category !== 'ΕΞΕΤΑΣΕΙΣ';
+            });
+            const classExamGrades = allClassGrades.filter(g => g.category === 'ΕΞΕΤΑΣΕΙΣ');
+
+            const classTrimesterAvg = calcAvg(classTrimesterGrades);
+            const classTetramesterAvg = calcAvg(classTetramesterGrades);
+            const classExamAvg = calcAvg(classExamGrades);
+
+            // Calculate stats for each student by period
+            const studentStats = classStudents.map(student => {
+                const studentGrades = reportGrades.filter(g => g.studentRegNo === student.regNo && g.classId === classId);
+                const finalKey = `${classId}_${student.regNo}`;
+                
+                const trimesterGrades = studentGrades.filter(g => {
+                    const gDate = new Date(g.date);
+                    return gDate >= new Date('2025-09-01') && gDate <= new Date('2025-12-31') && g.category !== 'ΕΞΕΤΑΣΕΙΣ';
+                });
+                const tetramesterGrades = studentGrades.filter(g => {
+                    const gDate = new Date(g.date);
+                    return gDate >= new Date('2026-01-01') && gDate <= new Date('2026-05-31') && g.category !== 'ΕΞΕΤΑΣΕΙΣ';
+                });
+                const examGrades = studentGrades.filter(g => g.category === 'ΕΞΕΤΑΣΕΙΣ');
+
+                // Get manual final grades (average across all subjects)
+                let trimesterFinal = '-';
+                let tetramesterFinal = '-';
+                let yearFinal = '-';
+                
+                const trimesterFinals = subjects.map(s => finalGrades[`${finalKey}_${s}_trimester`]).filter(v => v);
+                const tetramesterFinals = subjects.map(s => finalGrades[`${finalKey}_${s}_tetramester`]).filter(v => v);
+                const yearFinals = subjects.map(s => finalGrades[`${finalKey}_${s}_year`]).filter(v => v);
+                
+                if (trimesterFinals.length > 0) {
+                    trimesterFinal = (trimesterFinals.reduce((a, b) => a + b, 0) / trimesterFinals.length).toFixed(1);
+                }
+                if (tetramesterFinals.length > 0) {
+                    tetramesterFinal = (tetramesterFinals.reduce((a, b) => a + b, 0) / tetramesterFinals.length).toFixed(1);
+                }
+                if (yearFinals.length > 0) {
+                    yearFinal = (yearFinals.reduce((a, b) => a + b, 0) / yearFinals.length).toFixed(1);
+                }
+
+                // Exam average
+                const examAvg = calcAvg(examGrades);
+
+                return {
+                    name: student.name,
+                    regNo: student.regNo,
+                    trimesterAvg: calcAvg(trimesterGrades),
+                    trimesterFinal,
+                    tetramesterAvg: calcAvg(tetramesterGrades),
+                    tetramesterFinal,
+                    examAvg,
+                    yearFinal
+                };
+            });
+
+            // Generate PDF
+            const reportWindow = window.open('', '_blank');
+            reportWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Κατάσταση Τάξης - ${className}</title>
+                    <style>
+                        @page { size: A4 landscape; margin: 8mm; }
+                        @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+                        * { margin: 0; padding: 0; box-sizing: border-box; }
+                        body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 9px; padding: 12px; color: #333; }
+                        .header { text-align: center; border-bottom: 3px solid #5B2C83; padding-bottom: 8px; margin-bottom: 12px; }
+                        .header h1 { color: #5B2C83; font-size: 15px; margin-bottom: 4px; }
+                        .header h2 { color: #666; font-size: 11px; font-weight: normal; }
+                        table { width: 100%; border-collapse: collapse; font-size: 8px; }
+                        th { background: #5B2C83; color: white; padding: 6px 3px; text-align: center; font-weight: 600; }
+                        th:first-child, th:nth-child(2) { text-align: left; }
+                        td { padding: 6px 3px; border-bottom: 1px solid #ddd; text-align: center; }
+                        td:first-child, td:nth-child(2) { text-align: left; }
+                        tr:nth-child(even) { background: #fafafa; }
+                        tr:hover { background: #f8f5fc; }
+                        .period-header { background: #e8d5f2 !important; color: #5B2C83 !important; }
+                        .avg-col { font-weight: 600; }
+                        .class-avg-col { font-weight: 600; color: #666; background: #f0f0f0 !important; }
+                        .final-col { font-weight: 700; color: #5B2C83; background: #f8f5fc !important; }
+                        .exam-col { background: #fff3cd !important; color: #856404 !important; font-weight: 600; }
+                        .year-col { background: #5B2C83 !important; color: white !important; font-weight: 700; }
+                        .footer { margin-top: 12px; text-align: center; font-size: 7px; color: #999; border-top: 1px solid #eee; padding-top: 8px; }
+                        .class-avg-row { background: #e8d5f2 !important; font-weight: 700; }
+                        .class-avg-row td { border-top: 2px solid #5B2C83; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>ΜΟΥΣΙΚΟ ΣΧΟΛΕΙΟ ΛΕΥΚΑΔΑΣ</h1>
+                        <h2>Κατάσταση Τάξης: ${className} - Σχολικό Έτος 2025-2026</h2>
+                    </div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th rowspan="2" style="width:4%">Α/Α</th>
+                                <th rowspan="2" style="width:18%">ΟΝΟΜΑΤΕΠΩΝΥΜΟ</th>
+                                <th colspan="3" class="period-header">Α΄ ΤΡΙΜΗΝΟ</th>
+                                <th colspan="3" class="period-header">Β΄ ΤΕΤΡΑΜΗΝΟ</th>
+                                <th rowspan="2" class="exam-col" style="width:8%">ΕΞΕΤΑΣΕΙΣ</th>
+                                <th rowspan="2" class="year-col" style="width:9%">ΤΕΛΙΚΟΣ ΕΤΟΥΣ</th>
+                            </tr>
+                            <tr>
+                                <th style="background:#f0e6f5;color:#5B2C83;">Μ.Ο.Μ.</th>
+                                <th style="background:#e0e0e0;color:#666;">Μ.Ο.Τ.</th>
+                                <th style="background:#f0e6f5;color:#5B2C83;">Βαθμός</th>
+                                <th style="background:#f0e6f5;color:#5B2C83;">Μ.Ο.Μ.</th>
+                                <th style="background:#e0e0e0;color:#666;">Μ.Ο.Τ.</th>
+                                <th style="background:#f0e6f5;color:#5B2C83;">Βαθμός</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${studentStats.map((s, i) => `
+                                <tr>
+                                    <td>${i + 1}</td>
+                                    <td>${s.name}</td>
+                                    <td class="avg-col">${s.trimesterAvg}</td>
+                                    <td class="class-avg-col">${classTrimesterAvg}</td>
+                                    <td class="final-col">${s.trimesterFinal}</td>
+                                    <td class="avg-col">${s.tetramesterAvg}</td>
+                                    <td class="class-avg-col">${classTetramesterAvg}</td>
+                                    <td class="final-col">${s.tetramesterFinal}</td>
+                                    <td class="exam-col">${s.examAvg}</td>
+                                    <td class="year-col">${s.yearFinal}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+
+                    <div class="footer">
+                        Μ.Ο.Μ. = Μέσος Όρος Μαθητή | Μ.Ο.Τ. = Μέσος Όρος Τμήματος | Ημερομηνία: ${new Date().toLocaleDateString('el-GR')} | Βαθμολόγιο - Μπίζου Διονυσία
+                    </div>
+                    <script>window.print();<\/script>
+                </body>
+                </html>
+            `);
+            reportWindow.document.close();
+            
+            showToast('✓ Η κατάσταση δημιουργήθηκε!');
+            closeModal();
+        }
+
+        function createClassGridReport() {
+            const classId = document.getElementById('report-class-grid').value;
+            const subject = document.getElementById('report-subject-grid').value;
+            
+            if (!classId) {
+                showToast('Επιλέξτε τάξη');
+                return;
+            }
+
+            
+            const reportGrades = getGradesForReports();
+const className = classes.find(c => c.id === classId)?.name;
+            const classStudents = students
+                .filter(s => s.classId === classId)
+                .sort((a, b) => a.name.localeCompare(b.name, 'el'));
+
+            // Get grades for each student
+            const gridData = classStudents.map(student => {
+                const studentGrades = reportGrades.filter(g => 
+                    g.studentRegNo === student.regNo && 
+                    g.classId === classId &&
+                    (!subject || g.subject === subject)
+                );
+                const finalKey = `${classId}_${student.regNo}`;
+
+                // Calculate averages per category (normalized to 0-20 scale)
+                const getAvg = (cat) => {
+                    const catGrades = studentGrades.filter(g => g.category === cat);
+                    if (catGrades.length === 0) return '-';
+                    // Normalize: if scale is 100, divide by 5 to get 0-20
+                    const normalized = catGrades.map(g => g.scale === 100 ? g.score / 5 : g.score);
+                    return (normalized.reduce((sum, s) => sum + s, 0) / normalized.length).toFixed(1);
+                };
+
+                // Get notes grouped by category
+                const notesByCategory = {};
+                categories.forEach(cat => {
+                    const catGrades = studentGrades.filter(g => g.category === cat && g.notes && g.notes.trim());
+                    if (catGrades.length > 0) {
+                        notesByCategory[cat] = catGrades.map(g => ({
+                            date: new Date(g.date).toLocaleDateString('el-GR'),
+                            score: g.scale === 100 ? (g.score / 5).toFixed(1) : g.score,
+                            note: g.notes
+                        }));
+                    }
+                });
+
+                const row = {
+                    name: student.name,
+                    regNo: student.regNo,
+                    notesByCategory,
+                    hasNotes: Object.keys(notesByCategory).length > 0,
+                    ΔΙΑΓΩΝΙΣΜΑ: getAvg('ΔΙΑΓΩΝΙΣΜΑ'),
+                    ΤΕΣΤ: getAvg('ΤΕΣΤ'),
+                    ΠΡΟΦΟΡΙΚΑ: getAvg('ΠΡΟΦΟΡΙΚΑ'),
+                    ΕΡΓΑΣΙΑ: getAvg('ΕΡΓΑΣΙΑ'),
+                    ΤΕΤΡΑΔΙΟ: getAvg('ΤΕΤΡΑΔΙΟ'),
+                    ΠΑΡΑΘΕΜΑ: getAvg('ΠΑΡΑΘΕΜΑ'),
+                    ΠΑΡΑΓΡΑΦΟΣ: getAvg('ΠΑΡΑΓΡΑΦΟΣ'),
+                    ΠΕΡΙΛΗΨΗ: getAvg('ΠΕΡΙΛΗΨΗ'),
+                    ΕΚΘΕΣΗ: getAvg('ΕΚΘΕΣΗ'),
+                    ΕΞΕΤΑΣΕΙΣ: getAvg('ΕΞΕΤΑΣΕΙΣ')
+                };
+
+                // Calculate M.O. from ALL categories (excluding exams), already normalized
+                const allCatValues = [
+                    row.ΔΙΑΓΩΝΙΣΜΑ, row.ΤΕΣΤ, row.ΠΡΟΦΟΡΙΚΑ, row.ΕΡΓΑΣΙΑ, 
+                    row.ΤΕΤΡΑΔΙΟ, row.ΠΑΡΑΘΕΜΑ, row.ΠΑΡΑΓΡΑΦΟΣ, row.ΠΕΡΙΛΗΨΗ, row.ΕΚΘΕΣΗ
+                ].filter(v => v !== '-').map(v => parseFloat(v));
+
+                if (allCatValues.length > 0) {
+                    row.ΜΟ = (allCatValues.reduce((a, b) => a + b, 0) / allCatValues.length).toFixed(1);
+                } else {
+                    row.ΜΟ = '-';
+                }
+
+                // Get manual final grade (average across all subjects for this student)
+                const yearFinals = subjects.map(s => finalGrades[`${finalKey}_${s}_year`]).filter(v => v);
+                if (yearFinals.length > 0) {
+                    row.ΤΕΛΙΚΟΣ = (yearFinals.reduce((a, b) => a + b, 0) / yearFinals.length).toFixed(1);
+                } else {
+                    row.ΤΕΛΙΚΟΣ = '-';
+                }
+
+                return row;
+            });
+
+            // Generate landscape PDF
+            generateLandscapePDF(gridData, className, subject);
+        }
+
+        function generateLandscapePDF(data, className, subject) {
+            // Create a new window with the report
+            const reportWindow = window.open('', '_blank');
+            const subjectTitle = subject || 'Όλα τα μαθήματα';
+            
+            // Helper to render notes section
+            const renderNotes = (notesByCategory) => {
+                if (Object.keys(notesByCategory).length === 0) return '';
+                
+                let html = '<div class="notes-section">';
+                for (const [cat, notes] of Object.entries(notesByCategory)) {
+                    html += `<div class="note-category"><span class="note-cat-name">${cat}:</span>`;
+                    notes.forEach(n => {
+                        html += `<span class="note-item">[${n.date}] ${n.note}</span>`;
+                    });
+                    html += '</div>';
+                }
+                html += '</div>';
+                return html;
+            };
+            
+            reportWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Πίνακας Βαθμολογίας - ${className}</title>
+                    <style>
+                        @page { size: A4 landscape; margin: 8mm; }
+                        @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+                        * { margin: 0; padding: 0; box-sizing: border-box; }
+                        body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 8px; padding: 8px; }
+                        .header { text-align: center; margin-bottom: 10px; border-bottom: 2px solid #5B2C83; padding-bottom: 8px; }
+                        .header h1 { color: #5B2C83; font-size: 14px; margin-bottom: 3px; }
+                        .header p { color: #666; font-size: 10px; }
+                        table { width: 100%; border-collapse: collapse; font-size: 7px; }
+                        th { background: #5B2C83; color: white; padding: 5px 2px; text-align: center; font-weight: 600; font-size: 6px; }
+                        th:first-child { text-align: left; min-width: 140px; }
+                        td { padding: 4px 2px; border-bottom: 1px solid #ddd; text-align: center; font-size: 7px; }
+                        td:first-child { text-align: left; font-weight: 500; }
+                        tr:nth-child(even) { background: #f8f5fc; }
+                        .exam-col { background: #fff3cd !important; color: #856404; font-weight: 600; }
+                        .avg-col { background: #e8d5f2 !important; color: #5B2C83; font-weight: 600; }
+                        .final-col { background: #5B2C83 !important; color: white !important; font-weight: 700; }
+                        .footer { margin-top: 10px; text-align: right; font-size: 8px; color: #666; }
+                        .no-grade { color: #ccc; }
+                        
+                        /* Notes styling */
+                        .notes-row td { 
+                            background: #fffef0 !important; 
+                            border-bottom: 2px solid #5B2C83;
+                            padding: 6px 8px;
+                        }
+                        .notes-section { 
+                            text-align: left; 
+                            font-size: 7px; 
+                            line-height: 1.5;
+                        }
+                        .note-category { 
+                            margin-bottom: 3px; 
+                        }
+                        .note-cat-name { 
+                            font-weight: 700; 
+                            color: #5B2C83; 
+                            background: #e8d5f2;
+                            padding: 1px 4px;
+                            border-radius: 3px;
+                            margin-right: 5px;
+                        }
+                        .note-item {
+                            display: inline-block;
+                            background: #f8f5fc;
+                            padding: 2px 6px;
+                            margin: 2px 3px;
+                            border-radius: 3px;
+                            border-left: 2px solid #5B2C83;
+                        }
+                        .student-row { border-top: 1px solid #ccc; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>ΜΟΥΣΙΚΟ ΣΧΟΛΕΙΟ ΛΕΥΚΑΔΑΣ</h1>
+                        <p><strong>${className}</strong> | Μάθημα: ${subjectTitle} | Ημερομηνία: ${new Date().toLocaleDateString('el-GR')}</p>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ΟΝΟΜΑΤΕΠΩΝΥΜΟ</th>
+                                <th>ΔΙΑΓ.</th>
+                                <th>ΤΕΣΤ</th>
+                                <th>ΠΡΟΦ.</th>
+                                <th>ΕΡΓΑΣ.</th>
+                                <th>ΤΕΤΡ.</th>
+                                <th>ΠΑΡΑΘ.</th>
+                                <th>ΠΑΡΑΓΡ.</th>
+                                <th>ΠΕΡΙΛ.</th>
+                                <th>ΕΚΘΕΣΗ</th>
+                                <th class="avg-col">Μ.Ο.Μ.</th>
+                                <th class="exam-col">ΕΞΕΤ.</th>
+                                <th class="final-col">ΤΕΛΙΚΟΣ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.map(row => `
+                                <tr class="student-row">
+                                    <td>${row.name}</td>
+                                    <td class="${row.ΔΙΑΓΩΝΙΣΜΑ === '-' ? 'no-grade' : ''}">${row.ΔΙΑΓΩΝΙΣΜΑ}</td>
+                                    <td class="${row.ΤΕΣΤ === '-' ? 'no-grade' : ''}">${row.ΤΕΣΤ}</td>
+                                    <td class="${row.ΠΡΟΦΟΡΙΚΑ === '-' ? 'no-grade' : ''}">${row.ΠΡΟΦΟΡΙΚΑ}</td>
+                                    <td class="${row.ΕΡΓΑΣΙΑ === '-' ? 'no-grade' : ''}">${row.ΕΡΓΑΣΙΑ}</td>
+                                    <td class="${row.ΤΕΤΡΑΔΙΟ === '-' ? 'no-grade' : ''}">${row.ΤΕΤΡΑΔΙΟ}</td>
+                                    <td class="${row.ΠΑΡΑΘΕΜΑ === '-' ? 'no-grade' : ''}">${row.ΠΑΡΑΘΕΜΑ}</td>
+                                    <td class="${row.ΠΑΡΑΓΡΑΦΟΣ === '-' ? 'no-grade' : ''}">${row.ΠΑΡΑΓΡΑΦΟΣ}</td>
+                                    <td class="${row.ΠΕΡΙΛΗΨΗ === '-' ? 'no-grade' : ''}">${row.ΠΕΡΙΛΗΨΗ}</td>
+                                    <td class="${row.ΕΚΘΕΣΗ === '-' ? 'no-grade' : ''}">${row.ΕΚΘΕΣΗ}</td>
+                                    <td class="avg-col">${row.ΜΟ}</td>
+                                    <td class="exam-col">${row.ΕΞΕΤΑΣΕΙΣ}</td>
+                                    <td class="final-col">${row.ΤΕΛΙΚΟΣ}</td>
+                                </tr>
+                                ${row.hasNotes ? `
+                                <tr class="notes-row">
+                                    <td colspan="13">${renderNotes(row.notesByCategory)}</td>
+                                </tr>
+                                ` : ''}
+                            `).join('')}
+                        </tbody>
+                    </table>
+                    <div class="footer">
+                        Εκτυπώθηκε: ${new Date().toLocaleString('el-GR')} | Βαθμολόγιο - Μπίζου Διονυσία
+                    </div>
+                    <script>window.print();<\/script>
+                </body>
+                </html>
+            `);
+            reportWindow.document.close();
+            
+            showToast('✓ Ο πίνακας δημιουργήθηκε!');
+            closeModal();
+        }
+
+        // ============== GOOGLE SHEETS SYNC ==============
+        // NOTE: This implementation performs an invisible, non-blocking 'shadow sync' to Google Sheets
+        // without changing the UI, reports, or existing storage flow.
+        const GOOGLE_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbw9BhMnLNwqbse78oEwSKyXDF8BntvphuGbvHJmNdwwtudtsigw6IcLPdhBUZf8VndL9A/exec';
+        const GOOGLE_SYNC_QUEUE_KEY = 'google_sync_queue_v1';
+        const GOOGLE_SYNC_TOKEN = 'tok_Dwhnci7Rx7kDgf24yVOLhE3YACHccNmd6Ejpb0e_5Mw';
+
+        function getGoogleEndpointUrl() {
+            const sep = GOOGLE_WEBAPP_URL.includes('?') ? '&' : '?';
+            return GOOGLE_WEBAPP_URL + sep + 'token=' + encodeURIComponent(GOOGLE_SYNC_TOKEN);
+        }
+
+        function enqueueGoogleSync(payload) {
+            try {
+                const q = JSON.parse(localStorage.getItem(GOOGLE_SYNC_QUEUE_KEY) || '[]');
+                q.push(payload);
+                localStorage.setItem(GOOGLE_SYNC_QUEUE_KEY, JSON.stringify(q));
+            } catch (e) {
+                console.warn('Google sync queue error:', e);
+            }
+        }
+
+        
+        function markGradeSynced_(id) {
+            try {
+                const idx = grades.findIndex(g => String(g.id) === String(id));
+                if (idx === -1) return;
+                grades[idx].synced = true;
+                grades[idx].syncedAt = new Date().toISOString();
+                localStorage.setItem(GRADEBOOK_KEY, JSON.stringify(grades));
+            } catch (e) {
+                // no-op
+            }
+        }
+
+async function flushGoogleSyncQueue() {
+            // Best-effort: never block UI / saving flow
+            if (!navigator.onLine) return;
+
+            let q;
+            try {
+                q = JSON.parse(localStorage.getItem(GOOGLE_SYNC_QUEUE_KEY) || '[]');
+            } catch (e) {
+                return;
+            }
+            if (!Array.isArray(q) || q.length === 0) return;
+
+            const remaining = [];
+
+            for (const item of q) {
+                try {
+                    await fetch(getGoogleEndpointUrl(), {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(item)
+                    });
+                    if (item && item.id) { markGradeSynced_(item.id); }
+                    // no-cors: response is opaque; assume success if no exception
+                } catch (e) {
+                    remaining.push(item);
+                }
+            }
+
+            localStorage.setItem(GOOGLE_SYNC_QUEUE_KEY, JSON.stringify(remaining));
+
+            // Hybrid: if everything pending is flushed, clear local history to prevent stale "Ιστορικό" on mobile
+            if (HYBRID_CLEAR_LOCAL_ON_FULL_SYNC && remaining.length === 0) {
+                try { localStorage.setItem('bizou_hide_synced_history','1'); } catch(e) {}
+            }
+        }
+
+        
+        function buildGooglePayload(grade, action) {
+            if (!action) action = 'create';
+            if (action === 'delete') {
+                return { action: 'delete', id: String(grade.id) };
+            }
+            // Ensure the payload matches the sheet columns exactly
+            return {
+                action: action,
+                id: String(grade.id),
+                date: grade.date,
+                className: grade.className,
+                studentName: grade.studentName,
+                subject: grade.subject,
+                category: grade.category,
+                score: grade.score,
+                scale: grade.scale,
+                notes: grade.notes || ''
+            };
+        }
+
+        async function syncToGoogleSheets(grade, action) {
+            // If called without args (manual cloud button), just try flushing the queue
+            if (!grade) {
+                showToast('Συγχρονισμός με Google Sheets...');
+                await flushGoogleSyncQueue();
+                showToast('✓ Έγινε προσπάθεια συγχρονισμού');
+                return;
+            }
+
+            const payload = buildGooglePayload(grade, action);
+            enqueueGoogleSync(payload);
+            // Fire-and-forget; do not await
+            flushGoogleSyncQueue();
+        }
+
+        window.addEventListener('load', () => {
+            flushGoogleSyncQueue();
+        });
+        window.addEventListener('online', () => {
+            flushGoogleSyncQueue();
+        });
+
+        function createPeriodReport() {
+            const reportGrades = getGradesForReports();
+            const period = document.getElementById('report-period').value;
+            const periodNames = { '1': 'Α΄ Τρίμηνο', '2': 'Β΄ Τετράμηνο' };
+            const periodName = periodNames[period];
+
+            // Filter grades by period date range
+            const periodDates = periods.find(p => p.id === period);
+            const periodGrades = reportGrades.filter(g => {
+                const gDate = new Date(g.date);
+                return gDate >= new Date(periodDates.start) && gDate <= new Date(periodDates.end);
+            });
+
+            const calcAvg = (arr) => {
+                if (arr.length === 0) return '-';
+                const normalized = arr.map(g => g.scale === 100 ? g.score / 5 : g.score);
+                return (normalized.reduce((a, b) => a + b, 0) / normalized.length).toFixed(1);
+            };
+
+            // Overall statistics
+            const totalGrades = periodGrades.length;
+            const overallAvg = calcAvg(periodGrades);
+
+            // Stats per class with categories and subjects breakdown
+            const classData = classes.map(cls => {
+                const classGrades = periodGrades.filter(g => g.classId === cls.id);
+                const classStudentCount = students.filter(s => s.classId === cls.id).length;
+                
+                // Category stats for this class
+                const categoryStats = categories.map(cat => {
+                    const catGrades = classGrades.filter(g => g.category === cat);
+                    return { category: cat, count: catGrades.length, average: calcAvg(catGrades) };
+                }).filter(c => c.count > 0);
+
+                // Subject stats for this class
+                const subjectStats = subjects.map(subj => {
+                    const subjGrades = classGrades.filter(g => g.subject === subj);
+                    return { subject: subj, count: subjGrades.length, average: calcAvg(subjGrades) };
+                }).filter(s => s.count > 0);
+
+                return {
+                    name: cls.name,
+                    studentCount: classStudentCount,
+                    gradeCount: classGrades.length,
+                    average: calcAvg(classGrades),
+                    categories: categoryStats,
+                    subjects: subjectStats
+                };
+            });
+
+            // Generate PDF
+            const reportWindow = window.open('', '_blank');
+            reportWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Αναφορά Περιόδου - ${periodName}</title>
+                    <style>
+                        @page { size: A4; margin: 12mm; }
+                        @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+                        * { margin: 0; padding: 0; box-sizing: border-box; }
+                        body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 9px; padding: 15px; color: #333; }
+                        .header { text-align: center; border-bottom: 3px solid #5B2C83; padding-bottom: 10px; margin-bottom: 15px; }
+                        .header h1 { color: #5B2C83; font-size: 16px; margin-bottom: 5px; }
+                        .period-badge { display: inline-block; background: #5B2C83; color: white; padding: 5px 15px; border-radius: 20px; font-size: 11px; margin-top: 8px; }
+                        .stats-row { display: flex; justify-content: center; gap: 20px; margin-bottom: 15px; }
+                        .stat-box { background: #f8f5fc; padding: 12px 20px; border-radius: 8px; text-align: center; }
+                        .stat-box.highlight { background: #5B2C83; color: white; }
+                        .stat-value { font-size: 22px; font-weight: 700; color: #5B2C83; }
+                        .stat-box.highlight .stat-value { color: white; }
+                        .stat-label { font-size: 9px; color: #666; }
+                        .stat-box.highlight .stat-label { color: rgba(255,255,255,0.8); }
+                        .class-section { margin-bottom: 20px; page-break-inside: avoid; }
+                        .class-header { background: #5B2C83; color: white; padding: 10px 15px; font-size: 12px; font-weight: 700; display: flex; justify-content: space-between; }
+                        .class-body { border: 1px solid #e8d5f2; padding: 10px; }
+                        .two-tables { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+                        .mini-title { background: #e8d5f2; color: #5B2C83; padding: 5px 10px; font-size: 10px; font-weight: 600; margin-bottom: 5px; }
+                        table { width: 100%; border-collapse: collapse; font-size: 8px; }
+                        th { background: #f8f5fc; color: #5B2C83; padding: 5px; text-align: left; font-weight: 600; }
+                        td { padding: 5px; border-bottom: 1px solid #eee; }
+                        .avg-cell { font-weight: 700; color: #5B2C83; }
+                        .footer { margin-top: 15px; text-align: center; font-size: 8px; color: #999; border-top: 1px solid #eee; padding-top: 8px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>ΜΟΥΣΙΚΟ ΣΧΟΛΕΙΟ ΛΕΥΚΑΔΑΣ</h1>
+                        <div class="period-badge">${periodName} - Σχολικό Έτος 2025-2026</div>
+                    </div>
+
+                    <div class="stats-row">
+                        <div class="stat-box">
+                            <div class="stat-value">${students.length}</div>
+                            <div class="stat-label">Μαθητές</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value">${totalGrades}</div>
+                            <div class="stat-label">Βαθμολογήσεις</div>
+                        </div>
+                        <div class="stat-box highlight">
+                            <div class="stat-value">${overallAvg}</div>
+                            <div class="stat-label">Γενικός Μ.Ο.</div>
+                        </div>
+                    </div>
+
+                    ${classData.map(cls => `
+                        <div class="class-section">
+                            <div class="class-header">
+                                <span>${cls.name}</span>
+                                <span>Μαθητές: ${cls.studentCount} | Βαθμολογήσεις: ${cls.gradeCount} | Μ.Ο.: ${cls.average}</span>
+                            </div>
+                            <div class="class-body">
+                                <div class="two-tables">
+                                    <div>
+                                        <div class="mini-title">ΑΝΑ ΚΑΤΗΓΟΡΙΑ</div>
+                                        <table>
+                                            <thead><tr><th>Κατηγορία</th><th>Πλήθος</th><th>Μ.Ο.</th></tr></thead>
+                                            <tbody>
+                                                ${cls.categories.length > 0 ? cls.categories.map(c => `
+                                                    <tr>
+                                                        <td>${c.category}</td>
+                                                        <td>${c.count}</td>
+                                                        <td class="avg-cell">${c.average}</td>
+                                                    </tr>
+                                                `).join('') : '<tr><td colspan="3" style="text-align:center;color:#999;">Δεν υπάρχουν δεδομένα</td></tr>'}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div>
+                                        <div class="mini-title">ΑΝΑ ΜΑΘΗΜΑ</div>
+                                        <table>
+                                            <thead><tr><th>Μάθημα</th><th>Πλήθος</th><th>Μ.Ο.</th></tr></thead>
+                                            <tbody>
+                                                ${cls.subjects.length > 0 ? cls.subjects.map(s => `
+                                                    <tr>
+                                                        <td>${s.subject}</td>
+                                                        <td>${s.count}</td>
+                                                        <td class="avg-cell">${s.average}</td>
+                                                    </tr>
+                                                `).join('') : '<tr><td colspan="3" style="text-align:center;color:#999;">Δεν υπάρχουν δεδομένα</td></tr>'}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+
+                    <div class="footer">
+                        Ημερομηνία Εκτύπωσης: ${new Date().toLocaleString('el-GR')} | Βαθμολόγιο - Μπίζου Διονυσία
+                    </div>
+                    <script>window.print();<\/script>
+                </body>
+                </html>
+            `);
+            reportWindow.document.close();
+            
+            showToast('✓ Η αναφορά δημιουργήθηκε!');
+            closeModal();
+        }
+
+        function closeModal() {
+            document.getElementById('report-modal').classList.remove('active');
+        }
+
+        // Close modal on overlay click
+        document.getElementById('report-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'report-modal') closeModal();
+        });
+
+        // ============== TOAST ==============
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        // ============== PWA INSTALL ==============
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+        });
+    </script>
+</body>
+</html>
