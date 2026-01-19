@@ -2348,41 +2348,82 @@ function showReports() {
             `).join('');
         }
 
-        function saveFinalGrades() {
-            const classId = document.getElementById('card-class').value;
-            const studentRegNo = document.getElementById('card-student').value;
-            
-            if (!classId || !studentRegNo) {
-                showToast('Επιλέξτε μαθητή');
-                return;
-            }
+function saveFinalGrades() {
+            const studentRegNo = document.getElementById('cardStudentSelect').value;
+            const classId = document.getElementById('cardClassSelect').value;
+            if (!studentRegNo || !classId) { showToast('⚠ Επιλέξτε τάξη και μαθητή/τρια'); return; }
 
-            const finalKey = `${classId}_${studentRegNo}`;
+            const finals = loadFinalGrades_();
+            if (!finals[studentRegNo]) finals[studentRegNo] = {};
 
-            subjects.forEach(subject => {
-                const subjectId = subject.replace(/\s/g, '_');
-                
-                // Trimester
-                const trimesterInput = document.getElementById(`final-${subjectId}-trimester`);
-                if (trimesterInput && trimesterInput.value) {
-                    finalGrades[`${finalKey}_${subject}_trimester`] = parseFloat(trimesterInput.value);
-                }
+            const cls = classes.find(c => c.id === classId);
+            const stu = students.find(s => s.regNo === studentRegNo);
+            const className = cls ? cls.name : classId;
+            const studentName = stu ? stu.name : studentRegNo;
 
-                // Tetramester
-                const tetramesterInput = document.getElementById(`final-${subjectId}-tetramester`);
-                if (tetramesterInput && tetramesterInput.value) {
-                    finalGrades[`${finalKey}_${subject}_tetramester`] = parseFloat(tetramesterInput.value);
-                }
+            // 1) Save to local "final grades" cache (UI card)
+            // 2) Mirror each entered final grade into the main Gradebook (DB) + Google Sheets sync
+            //    Reports MUST read from Gradebook only.
+            let wroteAny = false;
 
-                // Year
-                const yearInput = document.getElementById(`final-${subjectId}-year`);
-                if (yearInput && yearInput.value) {
-                    finalGrades[`${finalKey}_${subject}_year`] = parseFloat(yearInput.value);
-                }
+            subjects.forEach(sub => {
+                const subjectId = sub.id;
+                const subjectName = sub.name;
+                periods.forEach(p => {
+                    const input = document.getElementById(`final_${subjectId}_${p.id}`);
+                    if (!input) return;
+                    const raw = (input.value || '').trim();
+                    // Keep empty values in UI cache, but do NOT write empty rows to DB
+                    if (!finals[studentRegNo][subjectId]) finals[studentRegNo][subjectId] = {};
+                    finals[studentRegNo][subjectId][p.id] = raw;
+
+                    if (raw === '') return;
+                    const score = parseFloat(raw);
+                    if (Number.isNaN(score)) return;
+
+                    wroteAny = true;
+
+                    // Deterministic ID: 1 row per (student, subject, period)
+                    const gid = `FINAL_${classId}_${studentRegNo}_${subjectId}_${p.id}`;
+
+                    const dateStr = (p && p.end) ? p.end : new Date().toISOString().slice(0,10);
+                    const gradeRow = {
+                        id: gid,
+                        classId,
+                        className,
+                        studentRegNo,
+                        studentName,
+                        subjectId,
+                        subject: subjectName,
+                        categoryId: 'final_manual',
+                        category: `Τελικός Βαθμός (${p.name})`,
+                        score: score,
+                        scale: 20,
+                        notes: 'FINAL_MANUAL',
+                        date: dateStr,
+                        synced: false,
+                        // keep for UI: these rows do NOT need to appear in History unless you want them
+                        hideFromHistory: true
+                    };
+
+                    // Upsert into Gradebook (grades array is the Gradebook in-memory cache)
+                    const idx = grades.findIndex(g => String(g.id) === String(gid));
+                    const action = (idx >= 0) ? 'update' : 'create';
+                    if (idx >= 0) {
+                        grades[idx] = { ...grades[idx], ...gradeRow, synced: false };
+                    } else {
+                        grades.push(gradeRow);
+                    }
+
+                    // Persist Gradebook + trigger sync
+                    try { saveGradebook_(); } catch(e) {}
+                    try { syncToGoogleSheets(gradeRow, action); } catch(e) {}
+                });
             });
 
-            localStorage.setItem('bizou_final_grades', JSON.stringify(finalGrades));
-            showToast('✓ Οι βαθμοί αποθηκεύτηκαν');
+            try { localStorage.setItem(FINAL_GRADES_KEY, JSON.stringify(finals)); } catch(e) {}
+
+            showToast(wroteAny ? '✓ Αποθηκεύτηκαν οι τελικοί βαθμοί (και γράφτηκαν στη βάση)' : '✓ Αποθηκεύτηκαν οι τελικοί βαθμοί');
         }
 
         // ============== REPORTS ==============
