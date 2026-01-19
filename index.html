@@ -3100,6 +3100,32 @@ function escapeHtml(value) {
         .replace(/'/g, '&#39;');
 }
 
+// ------------------------------------------------------------
+// Helper: open report HTML reliably (mobile-friendly)
+// ------------------------------------------------------------
+function openReportHtml(html, filenameBase) {
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+
+    // Attempt to open in a new tab (works best when called from a click handler)
+    const w = window.open(url, '_blank');
+    if (!w) {
+        // Popup blocked: fall back to download
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${filenameBase || 'report'}.html`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        if (typeof showToast === 'function') {
+            showToast('Το report κατέβηκε ως αρχείο (ο browser μπλόκαρε το νέο tab).');
+        }
+    }
+
+    // Cleanup
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+}
+
 
 
 // Helper: DB-backed finals for reports (so reports keep working even if localStorage/history is cleared)
@@ -3142,7 +3168,11 @@ function createStudentFinalReport() {
                 const raw = getLatestFinalFromDb(classId, studentRegNo, sub);
                 const num = (raw === undefined || raw === null || raw === '') ? null : Number(raw);
                 const display = (num === null || Number.isNaN(num)) ? '-' : (Number.isInteger(num) ? String(num) : num.toFixed(1).replace('.', ','));
-                return { subject: sub, val: display, num: (num === null || Number.isNaN(num)) ? null : num };
+                return {
+                    subject: sub,
+                    display: display,
+                    num: (num === null || Number.isNaN(num)) ? null : num
+                };
             });
             const nums = rows.map(r => r.num).filter(n => n !== null);
             const avg = nums.length ? (nums.reduce((a,b)=>a+b,0) / nums.length) : null;
@@ -3215,8 +3245,8 @@ function createStudentFinalReport() {
                         <tbody>
                             ${rows.map(r => `
                                 <tr>
-                                    <td>${r.sub}</td>
-                                    <td class="center grade-cell">${r.display}</td>
+                                    <td>${escapeHtml(r.subject)}</td>
+                                    <td class="center grade-cell">${escapeHtml(r.display)}</td>
                                     <td class="center">${r.num !== null && r.num >= 18 ? '⭐ Άριστα' : r.num !== null && r.num >= 15 ? '✓ Πολύ Καλά' : ''}</td>
                                 </tr>
                             `).join('')}
