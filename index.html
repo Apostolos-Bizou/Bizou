@@ -1305,6 +1305,13 @@
                             <p>Πίνακας μαθητή με όλα τα μαθήματα & κατηγορίες</p>
                         </div>
                     </button>
+                    <button class="report-btn" onclick="generateReport('studentFinal')">
+                        <div class="report-icon">✅</div>
+                        <div class="report-info">
+                            <h3>Καρτέλα Μαθητή - Τελικοί Βαθμοί</h3>
+                            <p>Εκτύπωση τελικών βαθμών μαθητή (ανά μάθημα)</p>
+                        </div>
+                    </button>
                     <button class="report-btn" onclick="generateReport('class')">
                         <div class="report-icon">📊</div>
                         <div class="report-info">
@@ -1317,6 +1324,13 @@
                         <div class="report-info">
                             <h3>Πίνακας Τμήματος (Landscape)</h3>
                             <p>Αλφαβητικά με όλες τις κατηγορίες βαθμολόγησης</p>
+                        </div>
+                    </button>
+                    <button class="report-btn" onclick="generateReport('classFinal')">
+                        <div class="report-icon">✅</div>
+                        <div class="report-info">
+                            <h3>Καρτέλα Ανά Τάξη - Τελικοί Βαθμοί</h3>
+                            <p>Συγκεντρωτικός πίνακας τελικών βαθμών ανά τμήμα</p>
                         </div>
                     </button>
                     <button class="report-btn" onclick="generateReport('period')">
@@ -2486,6 +2500,33 @@ function saveFinalGrades() {
                         <span>Δημιουργία PDF (Landscape)</span>
                     </button>
                 `;
+	            } else if (type === 'studentFinal') {
+	                modalTitle.textContent = 'Καρτέλα Μαθητή - Τελικοί Βαθμοί';
+	                modalBody.innerHTML = `
+	                    <div class="select-group">
+	                        <label class="select-label">Τάξη</label>
+	                        <div class="select-wrapper">
+	                            <select class="custom-select" id="report-class-final-student" onchange="updateStudentsInReports('finalStudent')">
+	                                <option value="">Επιλέξτε τάξη...</option>
+	                                ${classes.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
+	                            </select>
+	                            <span class="select-arrow">▼</span>
+	                        </div>
+	                    </div>
+	                    <div class="select-group">
+	                        <label class="select-label">Μαθητής/τρια</label>
+	                        <div class="select-wrapper">
+	                            <select class="custom-select" id="report-student-final">
+	                                <option value="">Επιλέξτε πρώτα τάξη...</option>
+	                            </select>
+	                            <span class="select-arrow">▼</span>
+	                        </div>
+	                    </div>
+	                    <button class="submit-btn" onclick="createStudentFinalReport()">
+	                        <span>✅</span>
+	                        <span>Δημιουργία PDF</span>
+	                    </button>
+	                `;
             } else if (type === 'class') {
                 modalTitle.textContent = 'Κατάσταση Τάξης';
                 modalBody.innerHTML = `
@@ -2532,6 +2573,24 @@ function saveFinalGrades() {
                         <span>Δημιουργία PDF (Landscape)</span>
                     </button>
                 `;
+	            } else if (type === 'classFinal') {
+	                modalTitle.textContent = 'Καρτέλα Ανά Τάξη - Τελικοί Βαθμοί';
+	                modalBody.innerHTML = `
+	                    <div class="select-group">
+	                        <label class="select-label">Τάξη</label>
+	                        <div class="select-wrapper">
+	                            <select class="custom-select" id="report-class-final">
+	                                <option value="">Επιλέξτε τάξη...</option>
+	                                ${classes.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
+	                            </select>
+	                            <span class="select-arrow">▼</span>
+	                        </div>
+	                    </div>
+	                    <button class="submit-btn" onclick="createClassFinalReport()">
+	                        <span>✅</span>
+	                        <span>Δημιουργία PDF (Landscape)</span>
+	                    </button>
+	                `;
             } else {
                 modalTitle.textContent = 'Αναφορά Περιόδου';
                 modalBody.innerHTML = `
@@ -2796,6 +2855,193 @@ const student = students.find(s => s.regNo === studentRegNo && s.classId === cla
             reportWindow.document.close();
             
             showToast('✓ Το δελτίο δημιουργήθηκε!');
+            closeModal();
+        }
+
+        // =================================================
+        // FINAL GRADES ONLY REPORTS (Manual finals from Student Card)
+        // =================================================
+        function createStudentFinalReport() {
+            const classId = document.getElementById('report-class-grid-student')?.value;
+            const studentRegNo = document.getElementById('report-student-grid')?.value;
+            if (!classId || !studentRegNo) {
+                showToast('Επιλέξτε τάξη και μαθητή');
+                return;
+            }
+
+            const student = students.find(s => s.regNo === studentRegNo && s.classId === classId);
+            const className = classes.find(c => c.id === classId)?.name || '';
+            const finalKey = `${classId}_${studentRegNo}`;
+
+            const rows = subjects.map(subject => {
+                const t = finalGrades[`${finalKey}_${subject}_trimester`] || '-';
+                const tet = finalGrades[`${finalKey}_${subject}_tetramester`] || '-';
+                const ex = finalGrades[`${finalKey}_${subject}_exams`] || '-';
+                const y = finalGrades[`${finalKey}_${subject}_year`] || '-';
+                return { subject, t, tet, ex, y };
+            }).filter(r => (r.t !== '-' || r.tet !== '-' || r.ex !== '-' || r.y !== '-'));
+
+            const yearNums = rows.map(r => parseFloat(String(r.y).replace(',', '.'))).filter(n => !isNaN(n));
+            const overallYear = yearNums.length ? (yearNums.reduce((a,b)=>a+b,0)/yearNums.length).toFixed(1) : '-';
+
+            const w = window.open('', '_blank');
+            w.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Τελικοί Βαθμοί - ${student?.name || ''}</title>
+                    <style>
+                        @page { size: A4; margin: 12mm; }
+                        @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+                        body { font-family: 'Segoe UI', Arial, sans-serif; color: #222; padding: 12px; }
+                        .header { text-align:center; border-bottom: 3px solid #5B2C83; padding-bottom: 10px; margin-bottom: 12px; }
+                        .header h1 { margin: 0; color:#5B2C83; font-size: 18px; }
+                        .meta { margin-top: 6px; color:#555; font-size: 12px; }
+                        .box { background:#f8f5fc; border-radius:10px; padding:10px 12px; margin-bottom: 12px; }
+                        .box b { color:#5B2C83; }
+                        table { width: 100%; border-collapse: collapse; font-size: 12px; }
+                        th { background:#e8d5f2; color:#5B2C83; text-align:left; padding:8px; }
+                        td { border-bottom: 1px solid #eee; padding:8px; }
+                        tr:nth-child(even) td { background:#fafafa; }
+                        .right { text-align:right; }
+                        .summary { display:flex; justify-content:flex-end; margin-top: 10px; }
+                        .pill { background:#5B2C83; color:#fff; padding:10px 12px; border-radius: 999px; font-weight:700; }
+                        .footer { margin-top: 12px; color:#777; font-size: 10px; text-align:center; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>Καρτέλα Μαθητή - Τελικοί Βαθμοί</h1>
+                        <div class="meta">${className} | ${student?.name || ''} (${studentRegNo})</div>
+                    </div>
+
+                    <div class="box">
+                        <div><b>Σημείωση:</b> Η εκτύπωση αφορά τους χειροκίνητους τελικούς βαθμούς (καρτέλα μαθητή).</div>
+                    </div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Μάθημα</th>
+                                <th class="right">Τρίμηνο</th>
+                                <th class="right">Τετράμηνο</th>
+                                <th class="right">Εξετάσεις</th>
+                                <th class="right">Τελικός Έτους</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${rows.map(r => `
+                                <tr>
+                                    <td>${r.subject}</td>
+                                    <td class="right">${r.t}</td>
+                                    <td class="right">${r.tet}</td>
+                                    <td class="right">${r.ex}</td>
+                                    <td class="right"><b>${r.y}</b></td>
+                                </tr>
+                            `).join('') || `<tr><td colspan="5" style="text-align:center;color:#777;padding:16px;">Δεν βρέθηκαν τελικοί βαθμοί.</td></tr>`}
+                        </tbody>
+                    </table>
+
+                    <div class="summary">
+                        <div class="pill">Μ.Ο. Τελικού Έτους: ${overallYear}</div>
+                    </div>
+
+                    <div class="footer">Εκτυπώθηκε: ${new Date().toLocaleString('el-GR')} | Βαθμολόγιο - Μπίζου Διονυσία</div>
+                    <script>window.print();</script>
+                </body>
+                </html>
+            `);
+            w.document.close();
+
+            showToast('✓ Η καρτέλα τελικών βαθμών δημιουργήθηκε!');
+            closeModal();
+        }
+
+        function createClassFinalReport() {
+            const classId = document.getElementById('report-class-final')?.value;
+            if (!classId) {
+                showToast('Επιλέξτε τάξη');
+                return;
+            }
+
+            const className = classes.find(c => c.id === classId)?.name || '';
+            const classStudents = students.filter(s => s.classId === classId);
+
+            // Build per-student, per-subject year finals
+            const data = classStudents.map(st => {
+                const finalKey = `${classId}_${st.regNo}`;
+                const perSubject = {};
+                let nums = [];
+                subjects.forEach(sub => {
+                    const y = finalGrades[`${finalKey}_${sub}_year`];
+                    perSubject[sub] = y || '-';
+                    const n = parseFloat(String(y).replace(',', '.'));
+                    if (!isNaN(n)) nums.push(n);
+                });
+                const avg = nums.length ? (nums.reduce((a,b)=>a+b,0)/nums.length).toFixed(1) : '-';
+                return { regNo: st.regNo, name: st.name, avg, perSubject };
+            });
+
+            const w = window.open('', '_blank');
+            w.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Τελικοί Βαθμοί Τάξης - ${className}</title>
+                    <style>
+                        @page { size: A4 landscape; margin: 10mm; }
+                        @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+                        body { font-family: 'Segoe UI', Arial, sans-serif; color: #222; padding: 10px; }
+                        .header { text-align:center; border-bottom: 3px solid #5B2C83; padding-bottom: 10px; margin-bottom: 10px; }
+                        .header h1 { margin: 0; color:#5B2C83; font-size: 18px; }
+                        .meta { margin-top: 6px; color:#555; font-size: 12px; }
+                        table { width: 100%; border-collapse: collapse; font-size: 10px; }
+                        th { background:#e8d5f2; color:#5B2C83; text-align:center; padding:6px; position: sticky; top: 0; }
+                        td { border-bottom: 1px solid #eee; padding:6px; }
+                        tr:nth-child(even) td { background:#fafafa; }
+                        td.left { text-align:left; }
+                        td.center { text-align:center; }
+                        .avg { font-weight: 700; color:#1f6f3d; }
+                        .foot { margin-top: 10px; color:#777; font-size: 10px; text-align:center; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>Καρτέλα Ανά Τάξη - Τελικοί Βαθμοί (Έτους)</h1>
+                        <div class="meta">${className} | Χειροκίνητοι τελικοί βαθμοί (καρτέλα μαθητή)</div>
+                    </div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="text-align:left">Α.Μ.</th>
+                                <th style="text-align:left">Μαθητής</th>
+                                ${subjects.map(s => `<th>${s}</th>`).join('')}
+                                <th>Μ.Ο.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.map(r => `
+                                <tr>
+                                    <td class="left">${r.regNo}</td>
+                                    <td class="left">${r.name}</td>
+                                    ${subjects.map(s => `<td class="center">${r.perSubject[s] || '-'}</td>`).join('')}
+                                    <td class="center avg">${r.avg}</td>
+                                </tr>
+                            `).join('') || `<tr><td colspan="${subjects.length + 3}" style="text-align:center;color:#777;padding:16px;">Δεν βρέθηκαν μαθητές/τελικοί βαθμοί.</td></tr>`}
+                        </tbody>
+                    </table>
+
+                    <div class="foot">Εκτυπώθηκε: ${new Date().toLocaleString('el-GR')} | Βαθμολόγιο - Μπίζου Διονυσία</div>
+                    <script>window.print();</script>
+                </body>
+                </html>
+            `);
+            w.document.close();
+
+            showToast('✓ Η καρτέλα τάξης (τελικοί) δημιουργήθηκε!');
             closeModal();
         }
 
