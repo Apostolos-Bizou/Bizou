@@ -1994,14 +1994,14 @@
             const uniqueId = isFinalCategory(category)
                 ? makeGradeId({
                     classId,
-                    schoolYear: SCHOOL_YEAR,
+                    SCHOOL_YEAR,
                     studentRegistryNo: studentRegNo,
                     subjectName: subject,
                     category,
                   })
                 : makeAssessmentId({
                     classId,
-                    schoolYear: SCHOOL_YEAR,
+                    SCHOOL_YEAR,
                     studentRegistryNo: studentRegNo,
                     subjectName: subject,
                     category,
@@ -2475,38 +2475,29 @@ function showReports() {
         }
 
 function saveFinalGrades() {
-            // Prevent double-run (mobile double tap / fast clicks)
-            const classId = document.getElementById('card-class').value;
             const studentRegNo = document.getElementById('card-student').value;
-            const bulkKey = `finals|${classId}|${studentRegNo}`;
-            if (__inFlightSync.has(bulkKey)) {
-                showToast('⏳ Γίνεται ήδη αποθήκευση...');
-                return;
-            }
-            __inFlightSync.add(bulkKey);
+            const classId = document.getElementById('card-class').value;
+            if (!studentRegNo || !classId) { showToast('⚠ Επιλέξτε τάξη και μαθητή/τρια'); return; }
 
-            try {
-                if (!studentRegNo || !classId) { __inFlightSync.delete(bulkKey); showToast('⚠ Επιλέξτε τάξη και μαθητή/τρια'); return; }
+            const finals = loadFinalGrades_();
+            const finalKey = `${classId}_${studentRegNo}`;
+            if (!finals[finalKey]) finals[finalKey] = {};
 
-                const finals = loadFinalGrades_();
-                const finalKey = `${classId}_${studentRegNo}`;
-                if (!finals[finalKey]) finals[finalKey] = {};
+            const cls = classes.find(c => c.id === classId);
+            const stu = students.find(s => s.regNo === studentRegNo && s.classId === classId);
+            const className = cls ? cls.name : classId;
+            const studentName = stu ? stu.name : studentRegNo;
+            
+            const savedAt = new Date().toISOString();
 
-                const cls = classes.find(c => c.id === classId);
-                const stu = students.find(s => s.regNo === studentRegNo && s.classId === classId);
-                const className = cls ? cls.name : classId;
-                const studentName = stu ? stu.name : studentRegNo;
-                
-                const savedAt = new Date().toISOString();
+            let wroteAny = false;
 
-                let wroteAny = false;
-
-                subjects.forEach((subjectName, subjectIndex) => {
+            subjects.forEach((subjectName, subjectIndex) => {
                 const subjectId = subjectName.replace(/\s/g, '_');
                 // Unified ID generation (same logic as single-grade save)
                 const gidFor = (categoryLabel) => makeGradeId({
                     classId,
-                    schoolYear: SCHOOL_YEAR,
+                    SCHOOL_YEAR,
                     studentRegistryNo: studentRegNo,
                     subjectName,
                     category: categoryLabel
@@ -2589,20 +2580,14 @@ function saveFinalGrades() {
                         }
                     }
                 }
-                });
+            });
 
-                // Update the in-memory finalGrades object
-                Object.assign(finalGrades, finals);
-                
-                try { localStorage.setItem(FINAL_GRADES_KEY, JSON.stringify(finals)); } catch(e) {}
+            // Update the in-memory finalGrades object
+            Object.assign(finalGrades, finals);
+            
+            try { localStorage.setItem(FINAL_GRADES_KEY, JSON.stringify(finals)); } catch(e) {}
 
-                showToast(wroteAny ? '✓ Αποθηκεύτηκαν οι τελικοί βαθμοί (και γράφτηκαν στη βάση)' : '✓ Αποθηκεύτηκαν οι τελικοί βαθμοί');
-            } finally {
-                __inFlightSync.delete(bulkKey);
-            } finally {
-                __inFlightSync.delete(bulkKey);
-            }
-            }
+            showToast(wroteAny ? '✓ Αποθηκεύτηκαν οι τελικοί βαθμοί (και γράφτηκαν στη βάση)' : '✓ Αποθηκεύτηκαν οι τελικοί βαθμοί');
         }
 
         // ============== REPORTS ==============
@@ -4080,9 +4065,10 @@ async function flushGoogleSyncQueue() {
                 try {
                     await fetch(getGoogleEndpointUrl(), {
                         method: 'POST',
+                        // no-cors + NO custom headers => avoids CORS preflight (Apps Script cannot answer OPTIONS)
                         mode: 'no-cors',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(item)
+                        body: JSON.stringify(item),
+                        keepalive: true
                     });
                     if (item && item.id) { markGradeSynced_(item.id); }
                     // no-cors: response is opaque; assume success if no exception
