@@ -1430,6 +1430,7 @@
         };
 
         // ============== DATA ==============
+        const SCHOOL_YEAR = '2025-2026';
         const classes = [
             { id: "A1_LYK_2025_2026", name: "Α1 ΛΥΚΕΙΟΥ ΓΕΝΙΚΗΣ ΠΑΙΔΕΙΑΣ", year: "2025-2026" },
             { id: "A2_LYK_2025_2026", name: "Α2 ΛΥΚΕΙΟΥ ΓΕΝΙΚΗΣ ΠΑΙΔΕΙΑΣ", year: "2025-2026" },
@@ -1934,6 +1935,7 @@
           return b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
         }
 
+        
         function makeAssessmentId({ classId, schoolYear, studentRegistryNo, subjectName, category, dateISO }) {
           const naturalKey = [classId, schoolYear, studentRegistryNo, subjectName, category, dateISO].join('|');
           return `GR_${base64UrlEncode(naturalKey)}`;
@@ -1950,6 +1952,7 @@
 
         function saveGrade() {
             const classId = document.getElementById('class-select').value;
+            const schoolYear = SCHOOL_YEAR;
             const studentRegNo = document.getElementById('student-select').value;
             const subject = document.getElementById('subject-select').value;
             const category = document.getElementById('category-select').value;
@@ -1991,14 +1994,14 @@
             const uniqueId = isFinalCategory(category)
                 ? makeGradeId({
                     classId,
-                    schoolYear,
+                    SCHOOL_YEAR,
                     studentRegistryNo: studentRegNo,
                     subjectName: subject,
                     category,
                   })
                 : makeAssessmentId({
                     classId,
-                    schoolYear,
+                    SCHOOL_YEAR,
                     studentRegistryNo: studentRegNo,
                     subjectName: subject,
                     category,
@@ -2492,10 +2495,9 @@ function saveFinalGrades() {
             subjects.forEach((subjectName, subjectIndex) => {
                 const subjectId = subjectName.replace(/\s/g, '_');
                 // Unified ID generation (same logic as single-grade save)
-                const schoolYear = '2025-2026';
                 const gidFor = (categoryLabel) => makeGradeId({
                     classId,
-                    schoolYear,
+                    SCHOOL_YEAR,
                     studentRegistryNo: studentRegNo,
                     subjectName,
                     category: categoryLabel
