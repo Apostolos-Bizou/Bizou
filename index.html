@@ -3257,14 +3257,14 @@ function createStudentFinalReport() {
                         <tbody>
                             ${rows.map(r => `
                                 <tr>
-                                    <td>${r.sub}</td>
-                                    <td class="center grade-cell">${r.display}</td>
+                                    <td>${r.subject}</td>
+                                    <td class="center grade-cell">${r.val}</td>
                                     <td class="center">${r.num !== null && r.num >= 18 ? '⭐ Άριστα' : r.num !== null && r.num >= 15 ? '✓ Πολύ Καλά' : ''}</td>
                                 </tr>
                             `).join('')}
                             <tr class="avg-row">
                                 <td style="text-align: right;"><strong>ΓΕΝΙΚΟΣ ΜΕΣΟΣ ΟΡΟΣ</strong></td>
-                                <td class="center avg-value">${avg === null ? '-' : avg.toFixed(1)}</td>
+                                <td class="center avg-value">${avg === null ? '-' : avg.toFixed(1).replace('.', ',')}</td>
                                 <td></td>
                             </tr>
                         </tbody>
@@ -3363,7 +3363,7 @@ function createStudentFinalReport() {
                                         <td>${st.regNo}</td>
                                         <td class="student-name">${st.name}</td>
                                         ${subjectCells}
-                                        <td class="avg-cell">${avg === null ? '-' : avg.toFixed(1)}</td>
+                                        <td class="avg-cell">${avg === null ? '-' : avg.toFixed(1).replace('.', ',')}</td>
                                     </tr>
                                 `;
                             }).join('')}
