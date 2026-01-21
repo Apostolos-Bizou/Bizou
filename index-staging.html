@@ -6,10 +6,10 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Βαθμολόγιο">
-    <meta name="theme-color" content="#5B2C83">
+    <meta name="theme-color" content="#2E7D32">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Βαθμολόγιο">
-    <title>Βαθμολόγιο - Μπίζου</title>
+    <title>Βαθμολόγιο - STAGING</title>
     
     <!-- PWA Manifest - Inline -->
     <link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoizpLOsc64zrzOv867z4zOs865zr8gLSDOnM+Azq/Ots6/z4UiLCJzaG9ydF9uYW1lIjoizpLOsc64zrzOv867z4zOs865zr8iLCJkZXNjcmlwdGlvbiI6Is6Vz4bOsc+BzrzOv86zzq4gzrrOsc+EzrHPh8+Oz4HOuc+DzrfPgiDOus6xzrkgzrHOvc6xz4bOv8+Bz47OvSDOss6xzrjOvM6/zrvOv86zzq/Osc+CLiIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI0ZBRkFGQyIsInRoZW1lX2NvbG9yIjoiIzVCMkM4MyIsImljb25zIjpbXX0=">
@@ -22,12 +22,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #5B2C83;
-            --primary-light: #7B4CA3;
-            --primary-dark: #3D1D57;
-            --primary-gradient: linear-gradient(135deg, #7B4CA3 0%, #5B2C83 50%, #3D1D57 100%);
-            --accent: #E8D5F2;
-            --accent-light: #F5EEF9;
+            --primary: #2E7D32;
+            --primary-light: #4CAF50;
+            --primary-dark: #1B5E20;
+            --primary-gradient: linear-gradient(135deg, #4CAF50 0%, #2E7D32 50%, #1B5E20 100%);
+            --accent: #E8F5E9;
+            --accent-light: #F1F8E9;
             --success: #2ECC71;
             --warning: #F39C12;
             --danger: #E74C3C;
@@ -1076,7 +1076,7 @@
                 <div class="app-logo">
                     <div class="logo-icon">📚</div>
                     <div>
-                        <div class="app-title">Βαθμολόγιο</div>
+                        <div class="app-title">🧪 STAGING</div>
                         <div class="app-subtitle">Μουσικό Σχολείο Λευκάδας</div>
                     </div>
                 </div>
@@ -1389,14 +1389,14 @@
 
     <script>
         // ============== HYBRID OFFLINE→SYNC→CLEAR (mobile-safe) ==============
-        const APP_BUILD = '2026-01-19-STAGING';
+        const APP_BUILD = '2026-01-19-finalreports1-staging';
         const HYBRID_CLEAR_LOCAL_ON_FULL_SYNC = true;
         const LOCAL_GRADES_KEY = 'bizou_grades_staging';
         const LOCAL_SYNC_QUEUE_KEY = 'google_sync_queue_v1_staging';
 
         (function versionedWipe(){
             try {
-                const prev = localStorage.getItem('bizou_app_build');
+                const prev = localStorage.getItem('bizou_app_build_staging');
                 if (prev !== APP_BUILD) {
                     // New build detected: wipe local history + pending queue to avoid "ghost" entries
                     localStorage.removeItem(LOCAL_GRADES_KEY);
@@ -1412,7 +1412,7 @@
                             caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
                         }
                     } catch (e) {}
-                    localStorage.setItem('bizou_app_build', APP_BUILD);
+                    localStorage.setItem('bizou_app_build_staging', APP_BUILD);
                 }
             } catch(e) { /* ignore */ }
         })();
