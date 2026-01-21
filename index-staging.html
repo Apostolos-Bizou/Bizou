@@ -3810,17 +3810,25 @@ const student = students.find(s => s.regNo === studentRegNo && s.classId === cla
                 !c.includes('Τετράμηνο') && 
                 !c.includes('Έτους')
             );
+            
+            // Helper to check if grade is a regular grade (not final)
+            const isRegularGrade = (g) => {
+                return regularCategories.includes(g.category) &&
+                       g.category !== 'Α΄ Τρίμηνο' &&
+                       g.category !== 'Β΄ Τετράμηνο' &&
+                       g.category !== 'Τελικός Έτους';
+            };
 
-            // Calculate CLASS averages (Μ.Ο. Τμήματος) for this subject
+            // Calculate CLASS averages (Μ.Ο. Τμήματος) for this subject - ONLY regular grades
             const classTrimesterGrades = allClassGrades.filter(g => {
                 const gDate = new Date(g.date);
                 return gDate >= new Date('2025-09-01') && gDate <= new Date('2025-12-31') && 
-                       regularCategories.includes(g.category);
+                       isRegularGrade(g);
             });
             const classTetramesterGrades = allClassGrades.filter(g => {
                 const gDate = new Date(g.date);
                 return gDate >= new Date('2026-01-01') && gDate <= new Date('2026-05-31') && 
-                       regularCategories.includes(g.category);
+                       isRegularGrade(g);
             });
 
             const classTrimesterAvg = calcAvg(classTrimesterGrades);
@@ -3838,14 +3846,14 @@ const student = students.find(s => s.regNo === studentRegNo && s.classId === cla
                 const trimesterGrades = studentGrades.filter(g => {
                     const gDate = new Date(g.date);
                     return gDate >= new Date('2025-09-01') && gDate <= new Date('2025-12-31') && 
-                           regularCategories.includes(g.category);
+                           isRegularGrade(g);
                 });
                 
                 // Μ.Ο.Μ. Τετραμήνου
                 const tetramesterGrades = studentGrades.filter(g => {
                     const gDate = new Date(g.date);
                     return gDate >= new Date('2026-01-01') && gDate <= new Date('2026-05-31') && 
-                           regularCategories.includes(g.category);
+                           isRegularGrade(g);
                 });
                 
                 // ΕΞΕΤΑΣΕΙΣ - από κατηγορία ΕΞΕΤΑΣΕΙΣ (τελευταίος βαθμός)
