@@ -1627,6 +1627,16 @@
             { id: '2', name: 'Β΄ Τετράμηνο', start: '2026-01-01', end: '2026-05-31' }
         ];
         
+        // Global helper: Check if grade is regular (for M.O. calculations)
+        // Excludes: ΕΞΕΤΑΣΕΙΣ, Α΄ Τρίμηνο, Β΄ Τετράμηνο, Τελικός Έτους
+        function isRegularGrade(g) {
+            if (!g || !g.category) return false;
+            return g.category !== 'ΕΞΕΤΑΣΕΙΣ' && 
+                   !g.category.includes('Τρίμηνο') && 
+                   !g.category.includes('Τετράμηνο') && 
+                   !g.category.includes('Έτους');
+        }
+        
         const commentPhrases = [
             { id: 1, category: "Θετικό", text: "Πολύ καλή προσπάθεια σήμερα." },
             { id: 2, category: "Θετικό", text: "Σαφής δομή και σωστή τεκμηρίωση." },
@@ -2481,15 +2491,15 @@ function showReports() {
                 ${subjects.map(subject => {
                     const subjectGrades = studentGrades.filter(g => g.subject === subject);
                     
-                    // Filter by period
+                    // Filter by period - ONLY regular grades (exclude finals)
                     const trimesterGrades = subjectGrades.filter(g => {
                         const gDate = new Date(g.date);
-                        return gDate >= new Date('2025-09-01') && gDate <= new Date('2025-12-31') && g.category !== 'ΕΞΕΤΑΣΕΙΣ';
+                        return gDate >= new Date('2025-09-01') && gDate <= new Date('2025-12-31') && isRegularGrade(g);
                     });
                     
                     const tetramesterGrades = subjectGrades.filter(g => {
                         const gDate = new Date(g.date);
-                        return gDate >= new Date('2026-01-01') && gDate <= new Date('2026-05-31') && g.category !== 'ΕΞΕΤΑΣΕΙΣ';
+                        return gDate >= new Date('2026-01-01') && gDate <= new Date('2026-05-31') && isRegularGrade(g);
                     });
 
                     const examGrades = subjectGrades.filter(g => g.category === 'ΕΞΕΤΑΣΕΙΣ');
@@ -3071,16 +3081,16 @@ const student = students.find(s => s.regNo === studentRegNo && s.classId === cla
             const subjectData = subjects.map(subject => {
                 const subjectGrades = studentGrades.filter(g => g.subject === subject);
                 
-                // Trimester grades by category
+                // Trimester grades by category - ONLY regular grades
                 const trimesterGrades = subjectGrades.filter(g => {
                     const gDate = new Date(g.date);
-                    return gDate >= new Date('2025-09-01') && gDate <= new Date('2025-12-31') && g.category !== 'ΕΞΕΤΑΣΕΙΣ';
+                    return gDate >= new Date('2025-09-01') && gDate <= new Date('2025-12-31') && isRegularGrade(g);
                 });
                 
-                // Tetramester grades by category
+                // Tetramester grades by category - ONLY regular grades
                 const tetramesterGrades = subjectGrades.filter(g => {
                     const gDate = new Date(g.date);
-                    return gDate >= new Date('2026-01-01') && gDate <= new Date('2026-05-31') && g.category !== 'ΕΞΕΤΑΣΕΙΣ';
+                    return gDate >= new Date('2026-01-01') && gDate <= new Date('2026-05-31') && isRegularGrade(g);
                 });
 
                 // Exam grades
@@ -3111,14 +3121,14 @@ const student = students.find(s => s.regNo === studentRegNo && s.classId === cla
                 return row;
             });
 
-            // Overall averages
+            // Overall averages - ONLY regular grades
             const allTrimester = studentGrades.filter(g => {
                 const gDate = new Date(g.date);
-                return gDate >= new Date('2025-09-01') && gDate <= new Date('2025-12-31') && g.category !== 'ΕΞΕΤΑΣΕΙΣ';
+                return gDate >= new Date('2025-09-01') && gDate <= new Date('2025-12-31') && isRegularGrade(g);
             });
             const allTetramester = studentGrades.filter(g => {
                 const gDate = new Date(g.date);
-                return gDate >= new Date('2026-01-01') && gDate <= new Date('2026-05-31') && g.category !== 'ΕΞΕΤΑΣΕΙΣ';
+                return gDate >= new Date('2026-01-01') && gDate <= new Date('2026-05-31') && isRegularGrade(g);
             });
 
             const overallTrimesterAvg = calcAvg(allTrimester);
@@ -3626,9 +3636,15 @@ const student = students.find(s => s.regNo === studentRegNo && s.classId === cla
                 };
             });
 
-            // Overall averages
-            const overallStudentAvg = calcAvg(studentGrades.filter(g => g.category !== 'ΕΞΕΤΑΣΕΙΣ'));
-            const overallClassAvg = calcAvg(allClassGrades.filter(g => g.category !== 'ΕΞΕΤΑΣΕΙΣ'));
+            // Overall averages - ONLY regular grades (exclude finals and exams)
+            const isRegularGradeForAvg = (g) => {
+                return g.category !== 'ΕΞΕΤΑΣΕΙΣ' && 
+                       !g.category.includes('Τρίμηνο') && 
+                       !g.category.includes('Τετράμηνο') && 
+                       !g.category.includes('Έτους');
+            };
+            const overallStudentAvg = calcAvg(studentGrades.filter(isRegularGradeForAvg));
+            const overallClassAvg = calcAvg(allClassGrades.filter(isRegularGradeForAvg));
 
             // Generate PDF
             const reportWindow = window.open('', '_blank');
@@ -4431,17 +4447,20 @@ async function flushGoogleSyncQueue() {
                 return (normalized.reduce((a, b) => a + b, 0) / normalized.length).toFixed(1);
             };
 
-            // Overall statistics
-            const totalGrades = periodGrades.length;
-            const overallAvg = calcAvg(periodGrades);
+            // Filter only regular grades for statistics (exclude finals)
+            const regularPeriodGrades = periodGrades.filter(isRegularGrade);
+
+            // Overall statistics - ONLY regular grades
+            const totalGrades = regularPeriodGrades.length;
+            const overallAvg = calcAvg(regularPeriodGrades);
 
             // Stats per class with categories and subjects breakdown
             const classData = classes.map(cls => {
-                const classGrades = periodGrades.filter(g => g.classId === cls.id);
+                const classGrades = regularPeriodGrades.filter(g => g.classId === cls.id);
                 const classStudentCount = students.filter(s => s.classId === cls.id).length;
                 
                 // Category stats for this class
-                const categoryStats = categories.map(cat => {
+                const categoryStats = categories.filter(c => c !== 'ΕΞΕΤΑΣΕΙΣ').map(cat => {
                     const catGrades = classGrades.filter(g => g.category === cat);
                     return { category: cat, count: catGrades.length, average: calcAvg(catGrades) };
                 }).filter(c => c.count > 0);
