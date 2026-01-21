@@ -2638,7 +2638,7 @@ function showReports() {
             `).join('');
         }
 
-function saveFinalGrades() {
+async function saveFinalGrades() {
             const studentRegNo = document.getElementById('card-student').value;
             const classId = document.getElementById('card-class').value;
             if (!studentRegNo || !classId) { showToast('⚠ Επιλέξτε τάξη και μαθητή/τρια'); return; }
@@ -2657,11 +2657,11 @@ function saveFinalGrades() {
             
             const savedAt = new Date().toISOString();
 
-            let wroteAny = false;
+            // Collect all grades to save
+            const gradesToSave = [];
 
             subjects.forEach((subjectName, subjectIndex) => {
                 const subjectId = subjectName.replace(/\s/g, '_');
-                // Unified ID generation (same logic as single-grade save)
                 const gidFor = (categoryLabel) => makeGradeId({
                     classId,
                     SCHOOL_YEAR,
@@ -2679,19 +2679,14 @@ function saveFinalGrades() {
                     if (raw !== '') {
                         const score = parseFloat(raw.replace(',', '.'));
                         if (!Number.isNaN(score)) {
-                            wroteAny = true;
                             const gid = gidFor('Α΄ Τρίμηνο');
-                            const gradeRow = {
+                            gradesToSave.push({
                                 id: gid, classId, className, studentRegNo, studentName,
                                 subjectId: subjectName, subject: subjectName,
                                 categoryId: 'final_trimester', category: 'Α΄ Τρίμηνο',
                                 score: score, scale: scaleToUse, notes: 'Τελικός',
                                 date: '2025-12-31', savedAt: savedAt, synced: false, hideFromHistory: true
-                            };
-                            const idx = grades.findIndex(g => String(g.id) === String(gid));
-                            if (idx >= 0) { grades[idx] = { ...grades[idx], ...gradeRow }; }
-                            else { grades.push(gradeRow); }
-                            try { saveGradebook_(); syncToGoogleSheets(gradeRow, idx >= 0 ? 'update' : 'create'); } catch(e) {}
+                            });
                         }
                     }
                 }
@@ -2705,19 +2700,14 @@ function saveFinalGrades() {
                     if (raw !== '') {
                         const score = parseFloat(raw.replace(',', '.'));
                         if (!Number.isNaN(score)) {
-                            wroteAny = true;
                             const gid = gidFor('Β΄ Τετράμηνο');
-                            const gradeRow = {
+                            gradesToSave.push({
                                 id: gid, classId, className, studentRegNo, studentName,
                                 subjectId: subjectName, subject: subjectName,
                                 categoryId: 'final_tetramester', category: 'Β΄ Τετράμηνο',
                                 score: score, scale: scaleToUse, notes: 'Τελικός',
                                 date: '2026-05-31', savedAt: savedAt, synced: false, hideFromHistory: true
-                            };
-                            const idx = grades.findIndex(g => String(g.id) === String(gid));
-                            if (idx >= 0) { grades[idx] = { ...grades[idx], ...gradeRow }; }
-                            else { grades.push(gradeRow); }
-                            try { saveGradebook_(); syncToGoogleSheets(gradeRow, idx >= 0 ? 'update' : 'create'); } catch(e) {}
+                            });
                         }
                     }
                 }
@@ -2731,30 +2721,72 @@ function saveFinalGrades() {
                     if (raw !== '') {
                         const score = parseFloat(raw.replace(',', '.'));
                         if (!Number.isNaN(score)) {
-                            wroteAny = true;
                             const gid = gidFor('Τελικός Έτους');
-                            const gradeRow = {
+                            gradesToSave.push({
                                 id: gid, classId, className, studentRegNo, studentName,
                                 subjectId: subjectName, subject: subjectName,
                                 categoryId: 'final_year', category: 'Τελικός Έτους',
                                 score: score, scale: scaleToUse, notes: 'Τελικός',
                                 date: new Date().toISOString().slice(0,10), savedAt: savedAt, synced: false, hideFromHistory: true
-                            };
-                            const idx = grades.findIndex(g => String(g.id) === String(gid));
-                            if (idx >= 0) { grades[idx] = { ...grades[idx], ...gradeRow }; }
-                            else { grades.push(gradeRow); }
-                            try { saveGradebook_(); syncToGoogleSheets(gradeRow, idx >= 0 ? 'update' : 'create'); } catch(e) {}
+                            });
                         }
                     }
                 }
             });
 
+            // Save locally first
+            gradesToSave.forEach(gradeRow => {
+                const idx = grades.findIndex(g => String(g.id) === String(gradeRow.id));
+                if (idx >= 0) { grades[idx] = { ...grades[idx], ...gradeRow }; }
+                else { grades.push(gradeRow); }
+            });
+            saveGradebook_();
+
             // Update the in-memory finalGrades object
             Object.assign(finalGrades, finals);
-            
             try { localStorage.setItem(FINAL_GRADES_KEY, JSON.stringify(finals)); } catch(e) {}
 
-            showToast(wroteAny ? '✓ Αποθηκεύτηκαν οι τελικοί βαθμοί (και γράφτηκαν στη βάση)' : '✓ Αποθηκεύτηκαν οι τελικοί βαθμοί');
+            // Now sync to Google Sheets SEQUENTIALLY (one by one)
+            if (gradesToSave.length > 0) {
+                showToast(`⏳ Αποθήκευση ${gradesToSave.length} βαθμών...`);
+                
+                for (let i = 0; i < gradesToSave.length; i++) {
+                    const gradeRow = gradesToSave[i];
+                    const idx = grades.findIndex(g => String(g.id) === String(gradeRow.id));
+                    try {
+                        await syncToGoogleSheetsAsync(gradeRow, idx >= 0 ? 'update' : 'create');
+                        // Small delay to prevent race conditions
+                        await new Promise(resolve => setTimeout(resolve, 300));
+                    } catch(e) {
+                        console.warn('Sync error:', e);
+                    }
+                }
+                
+                showToast(`✓ Αποθηκεύτηκαν ${gradesToSave.length} βαθμοί`);
+            } else {
+                showToast('✓ Αποθηκεύτηκαν οι τελικοί βαθμοί');
+            }
+        }
+        
+        // Async version of syncToGoogleSheets that waits for response
+        async function syncToGoogleSheetsAsync(grade, action) {
+            const payload = buildGooglePayload(grade, action);
+            const url = getGoogleWebAppUrl();
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (grade && grade.id) { markGradeSynced_(grade.id); }
+                return true;
+            } catch (e) {
+                console.warn('Sync failed:', e);
+                enqueueGoogleSync(payload);
+                return false;
+            }
         }
 
         // ============== REPORTS ==============
