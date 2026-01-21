@@ -2803,7 +2803,7 @@ function saveFinalGrades() {
                         <div class="select-wrapper">
                             <select class="custom-select" id="report-period-select">
                                 <option value="tetramester_a">Α΄ Τετράμηνο (Σεπ - Ιαν)</option>
-                                <option value="tetramester">Β΄ Τετράμηνο (Ιαν - Μάι)</option>
+                                <option value="tetramester_b">Β΄ Τετράμηνο (Ιαν - Μάι)</option>
                                 <option value="year">Ολόκληρο Έτος (Landscape)</option>
                             </select>
                             <span class="select-arrow">▼</span>
@@ -3621,7 +3621,7 @@ function createStudentReport() {
             // Period date ranges
             const periodDates = {
                 tetramester_a: { start: '2025-09-11', end: '2026-01-20', name: 'Α΄ Τετράμηνο', finalCat: 'Α΄ Τετράμηνο' },
-                tetramester: { start: '2026-01-21', end: '2026-05-31', name: 'Β΄ Τετράμηνο', finalCat: 'Β΄ Τετράμηνο' }
+                tetramester_b: { start: '2026-01-21', end: '2026-05-31', name: 'Β΄ Τετράμηνο', finalCat: 'Β΄ Τετράμηνο' }
             };
 
             // If "year" selected, use landscape format
@@ -3630,13 +3630,20 @@ function createStudentReport() {
                 return;
             }
 
-            // For tetramester_a or tetramester - Portrait format
+            // For tetramester_a or tetramester_b - Portrait format
             const period = periodDates[periodSelect];
+            console.log('Selected period:', periodSelect, period);
+            console.log('Student grades count:', studentGrades.length);
             
             // Filter grades by period
             const filterByPeriod = (grades) => grades.filter(g => {
                 const gDate = new Date(g.date);
-                return gDate >= new Date(period.start) && gDate <= new Date(period.end) && isRegularGrade(g);
+                const inRange = gDate >= new Date(period.start) && gDate <= new Date(period.end);
+                const isReg = isRegularGrade(g);
+                if (inRange && isReg) {
+                    console.log('Grade in period:', g.subject, g.category, g.date, g.score);
+                }
+                return inRange && isReg;
             });
 
             const subjectData = subjects.map(subject => {
