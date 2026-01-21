@@ -3612,6 +3612,16 @@ function createStudentReport() {
             const studentGrades = reportGrades.filter(g => g.studentRegNo === studentRegNo && g.classId === classId);
             const allClassGrades = reportGrades.filter(g => g.classId === classId);
             
+            console.log('=== DEBUG createStudentReport ===');
+            console.log('classId:', classId);
+            console.log('studentRegNo:', studentRegNo);
+            console.log('All reportGrades:', reportGrades.length);
+            console.log('First 3 grades:', reportGrades.slice(0, 3));
+            console.log('studentGrades filtered:', studentGrades.length);
+            if (studentGrades.length > 0) {
+                console.log('Sample studentGrade:', studentGrades[0]);
+            }
+            
             const calcAvg = (arr) => {
                 if (arr.length === 0) return '-';
                 const normalized = arr.map(g => g.scale === 100 ? g.score / 5 : g.score);
