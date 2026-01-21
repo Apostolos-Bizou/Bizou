@@ -1905,25 +1905,25 @@
             document.querySelectorAll('.card-final-input').forEach(input => {
                 input.max = scale;
                 input.step = scale === 100 ? '1' : '0.5';
-                // Update placeholder to show max
                 input.placeholder = scale === 100 ? '0-100' : '—';
             });
             
             // Show/hide all conversion boxes based on scale
             document.querySelectorAll('.grade-conversion').forEach(conv => {
                 if (scale === 100) {
-                    conv.classList.add('visible');
+                    conv.style.display = 'flex';
                     // Update conversion value if input has value
                     const inputId = conv.id.replace('conv-', 'final-');
                     const input = document.getElementById(inputId);
                     if (input && input.value) {
                         const value = parseFloat(input.value);
                         if (!isNaN(value)) {
-                            conv.querySelector('.conv-value').textContent = (value / 5).toFixed(1);
+                            const convValue = conv.querySelector('.conv-value');
+                            if (convValue) convValue.textContent = (value / 5).toFixed(1);
                         }
                     }
                 } else {
-                    conv.classList.remove('visible');
+                    conv.style.display = 'none';
                 }
             });
             
@@ -1931,7 +1931,6 @@
         }
 
         function updateGradeConversion(input) {
-            // Get the conversion display element
             const inputId = input.id;
             const convId = inputId.replace('final-', 'conv-');
             const convEl = document.getElementById(convId);
@@ -1940,17 +1939,19 @@
             
             const value = parseFloat(input.value);
             
-            // Only show conversion when scale is 100
+            // Only show/update conversion when scale is 100
             if (cardScale === 100) {
-                if (!isNaN(value) && value >= 0) {
-                    const converted = (value / 5).toFixed(1);
-                    convEl.querySelector('.conv-value').textContent = converted;
-                } else {
-                    convEl.querySelector('.conv-value').textContent = '-';
+                convEl.style.display = 'flex';
+                const convValue = convEl.querySelector('.conv-value');
+                if (convValue) {
+                    if (!isNaN(value) && value >= 0) {
+                        convValue.textContent = (value / 5).toFixed(1);
+                    } else {
+                        convValue.textContent = '-';
+                    }
                 }
-                convEl.classList.add('visible');
             } else {
-                convEl.classList.remove('visible');
+                convEl.style.display = 'none';
             }
         }
 
