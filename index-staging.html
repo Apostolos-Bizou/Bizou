@@ -2758,10 +2758,13 @@ function saveFinalGrades() {
         }
 
         // ============== REPORTS ==============
-        function generateReport(type) {
+        async function generateReport(type) {
             const modal = document.getElementById('report-modal');
             const modalTitle = document.getElementById('modal-title');
             const modalBody = document.getElementById('modal-body');
+            
+            // Φόρτωση δεδομένων από το Google Sheet
+            await fetchGradesFromSheet();
 
             if (type === 'student') {
                 modalTitle.textContent = 'Επιλέξτε Μαθητή';
@@ -4172,7 +4175,7 @@ const className = classes.find(c => c.id === classId)?.name;
         // ============== GOOGLE SHEETS SYNC ==============
         // NOTE: This implementation performs an invisible, non-blocking 'shadow sync' to Google Sheets
         // without changing the UI, reports, or existing storage flow.
-        const GOOGLE_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbwZcvmKJxmVE4xDjW1d4vwyC2eGfzhfkqOY5Asvyw-1UZ0osJpWAtRALwtintd6Pp1r/exec';
+        const GOOGLE_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbzMTWRT2qdLxrzEALeVw2HMc6ezWCUfZzzh1yA3XE7zoHpmxcCffPvDRflRhSOkset0/exec';
         const GOOGLE_SYNC_QUEUE_KEY = 'google_sync_queue_v1_staging';
         const GOOGLE_SYNC_TOKEN = 'tok_Dwhnci7Rx7kDgf24yVOLhE3YACHccNmd6Ejpb0e_5Mw';
 
@@ -4287,6 +4290,91 @@ async function flushGoogleSyncQueue() {
             enqueueGoogleSync(payload);
             // Fire-and-forget; do not await
             flushGoogleSyncQueue();
+        }
+
+        // ============== FETCH DATA FROM GOOGLE SHEETS ==============
+        let sheetGrades = []; // Cache for grades from Google Sheet
+        let sheetDataLoaded = false;
+        
+        async function fetchGradesFromSheet(forceRefresh = false) {
+            if (sheetDataLoaded && !forceRefresh) {
+                return sheetGrades;
+            }
+            
+            try {
+                showToast('⏳ Φόρτωση δεδομένων...');
+                const url = GOOGLE_WEBAPP_URL + '?action=fetchAll';
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.status === 'success' && data.grades) {
+                    sheetGrades = data.grades.map(g => {
+                        // Find matching class
+                        const matchedClass = classes.find(c => c.name === g.className);
+                        const classId = matchedClass ? matchedClass.id : g.className;
+                        
+                        // Find matching student
+                        const matchedStudent = students.find(s => s.name === g.studentName);
+                        const studentRegNo = matchedStudent ? matchedStudent.regNo : g.studentName;
+                        
+                        return {
+                            id: g.id,
+                            date: parseGreekDate(g.date),
+                            savedAt: g.savedAt,
+                            classId: classId,
+                            className: g.className,
+                            studentRegNo: studentRegNo,
+                            studentName: g.studentName,
+                            subject: g.subject,
+                            category: g.category,
+                            score: parseFloat(g.score) || 0,
+                            scale: parseInt(g.scale) || 20,
+                            notes: g.notes
+                        };
+                    });
+                    sheetDataLoaded = true;
+                    console.log('Sheet grades loaded:', sheetGrades.length);
+                    showToast(`✓ Φορτώθηκαν ${sheetGrades.length} βαθμοί`);
+                    return sheetGrades;
+                } else {
+                    console.error('Fetch error:', data);
+                    showToast('⚠ Σφάλμα φόρτωσης δεδομένων');
+                    return [];
+                }
+            } catch (error) {
+                console.error('Fetch error:', error);
+                showToast('⚠ Σφάλμα σύνδεσης');
+                return [];
+            }
+        }
+        
+        // Parse Greek date format DD/MM/YYYY to YYYY-MM-DD
+        function parseGreekDate(dateStr) {
+            if (!dateStr) return '';
+            if (String(dateStr).includes('-')) return dateStr; // Already ISO format
+            const parts = String(dateStr).split('/');
+            if (parts.length === 3) {
+                return `${parts[2]}-${parts[1].padStart(2,'0')}-${parts[0].padStart(2,'0')}`;
+            }
+            return dateStr;
+        }
+        
+        // Get grades for reports (from Sheet)
+        async function getGradesFromSheetForReports() {
+            await fetchGradesFromSheet();
+            return sheetGrades;
+        }
+        
+        // Wrapper function that reports will use
+        function getGradesForReports() {
+            // Return sheet grades if loaded, otherwise local grades
+            if (sheetDataLoaded && sheetGrades.length > 0) {
+                console.log('Using sheet grades:', sheetGrades.length);
+                return sheetGrades;
+            }
+            console.log('Using local grades:', grades.length);
+            return grades;
         }
 
         window.addEventListener('load', () => {
