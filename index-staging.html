@@ -1389,14 +1389,14 @@
 
     <script>
         // ============== HYBRID OFFLINE→SYNC→CLEAR (mobile-safe) ==============
-        const APP_BUILD = '2026-01-21-staging';
+        const APP_BUILD = '2026-01-19-finalreports1-staging';
         const HYBRID_CLEAR_LOCAL_ON_FULL_SYNC = true;
         const LOCAL_GRADES_KEY = 'bizou_grades_staging';
         const LOCAL_SYNC_QUEUE_KEY = 'google_sync_queue_v1_staging';
 
         (function versionedWipe(){
             try {
-                const prev = localStorage.getItem('bizou_app_build');
+                const prev = localStorage.getItem('bizou_app_build_staging');
                 if (prev !== APP_BUILD) {
                     // New build detected: wipe local history + pending queue to avoid "ghost" entries
                     localStorage.removeItem(LOCAL_GRADES_KEY);
@@ -1412,7 +1412,7 @@
                             caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
                         }
                     } catch (e) {}
-                    localStorage.setItem('bizou_app_build', APP_BUILD);
+                    localStorage.setItem('bizou_app_build_staging', APP_BUILD);
                 }
             } catch(e) { /* ignore */ }
         })();
@@ -1593,7 +1593,7 @@
         // - Reports MUST read from the gradebook.
         // - History may hide records without deleting them from the gradebook.
         // -----------------------------
-        const GRADEBOOK_KEY = 'bizou_gradebook_v1_staging';
+        const GRADEBOOK_KEY = 'bizou_gradebook_v1';
         const LEGACY_GRADEBOOK_KEY = 'bizou_grades';
         // const HISTORY_HIDDEN_KEY removed (duplicate);
 
@@ -4006,7 +4006,7 @@ const className = classes.find(c => c.id === classId)?.name;
         // ============== GOOGLE SHEETS SYNC ==============
         // NOTE: This implementation performs an invisible, non-blocking 'shadow sync' to Google Sheets
         // without changing the UI, reports, or existing storage flow.
-        const GOOGLE_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbyEUsn3xd-eDt8fzaheFtAGMxj2lPWOcQbOCo64H1Yd1W6eQF1ahEyPg3zax3xyR7e2/exec';
+        const GOOGLE_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycby3J-QXeuciA6mOsi_OlgJN6qaskKR7PK86_dhy4nIzaFjQ1RgD-PJVYces59mrmQ8-/exec';
         const GOOGLE_SYNC_QUEUE_KEY = 'google_sync_queue_v1_staging';
         const GOOGLE_SYNC_TOKEN = 'tok_Dwhnci7Rx7kDgf24yVOLhE3YACHccNmd6Ejpb0e_5Mw';
 
