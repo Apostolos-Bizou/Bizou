@@ -905,6 +905,44 @@
             background: white;
         }
 
+        /* Grade conversion display */
+        .grade-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .grade-conversion {
+            display: none;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 12px;
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            border: 2px solid #ff9800;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #e65100;
+            white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
+        }
+        
+        .grade-conversion.visible {
+            display: flex;
+        }
+        
+        .grade-conversion .conv-arrow {
+            color: #ff9800;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .grade-conversion .conv-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #e65100;
+        }
+
         .grade-student {
             font-size: 15px;
             font-weight: 600;
@@ -1196,6 +1234,11 @@
                         <div class="score-display">
                             <span class="score-value" id="score-display-100">50</span>
                             <span class="score-max">/100</span>
+                            <div class="score-conversion" id="score-conversion-100">
+                                <span class="conv-arrow">→</span>
+                                <span class="conv-value" id="score-conv-value">10.0</span>
+                                <span>/20</span>
+                            </div>
                         </div>
                         <input type="range" class="score-slider" id="score-slider-100" 
                                min="0" max="100" step="0.5" value="50"
@@ -1866,7 +1909,49 @@
                 input.placeholder = scale === 100 ? '0-100' : '—';
             });
             
+            // Show/hide all conversion boxes based on scale
+            document.querySelectorAll('.grade-conversion').forEach(conv => {
+                if (scale === 100) {
+                    conv.classList.add('visible');
+                    // Update conversion value if input has value
+                    const inputId = conv.id.replace('conv-', 'final-');
+                    const input = document.getElementById(inputId);
+                    if (input && input.value) {
+                        const value = parseFloat(input.value);
+                        if (!isNaN(value)) {
+                            conv.querySelector('.conv-value').textContent = (value / 5).toFixed(1);
+                        }
+                    }
+                } else {
+                    conv.classList.remove('visible');
+                }
+            });
+            
             showToast(`Κλίμακα: 0-${scale}`);
+        }
+
+        function updateGradeConversion(input) {
+            // Get the conversion display element
+            const inputId = input.id;
+            const convId = inputId.replace('final-', 'conv-');
+            const convEl = document.getElementById(convId);
+            
+            if (!convEl) return;
+            
+            const value = parseFloat(input.value);
+            
+            // Only show conversion when scale is 100
+            if (cardScale === 100) {
+                if (!isNaN(value) && value >= 0) {
+                    const converted = (value / 5).toFixed(1);
+                    convEl.querySelector('.conv-value').textContent = converted;
+                } else {
+                    convEl.querySelector('.conv-value').textContent = '-';
+                }
+                convEl.classList.add('visible');
+            } else {
+                convEl.classList.remove('visible');
+            }
         }
 
         function updateScore20(value) {
@@ -2441,10 +2526,18 @@ function showReports() {
                                 </div>
                                 <div class="period-final">
                                     <span>Βαθμός Τριμήνου:</span>
-                                    <input type="number" class="final-grade-input small card-final-input" 
-                                           id="final-${subjectId}-trimester"
-                                           value="${savedTrimester}"
-                                           min="0" max="20" step="0.5" placeholder="—"${maxVal}>
+                                    <div class="grade-input-wrapper">
+                                        <input type="number" class="final-grade-input small card-final-input" 
+                                               id="final-${subjectId}-trimester"
+                                               value="${savedTrimester}"
+                                               min="0" max="20" step="0.5" placeholder="—"
+                                               oninput="updateGradeConversion(this)"${maxVal}>
+                                        <div class="grade-conversion" id="conv-${subjectId}-trimester">
+                                            <span class="conv-arrow">→</span>
+                                            <span class="conv-value">-</span>
+                                            <span>/20</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -2463,10 +2556,18 @@ function showReports() {
                                 </div>
                                 <div class="period-final">
                                     <span>Βαθμός Τετραμήνου:</span>
-                                    <input type="number" class="final-grade-input small card-final-input" 
-                                           id="final-${subjectId}-tetramester"
-                                           value="${savedTetramester}"
-                                           min="0" max="20" step="0.5" placeholder="—"${maxVal}>
+                                    <div class="grade-input-wrapper">
+                                        <input type="number" class="final-grade-input small card-final-input" 
+                                               id="final-${subjectId}-tetramester"
+                                               value="${savedTetramester}"
+                                               min="0" max="20" step="0.5" placeholder="—"
+                                               oninput="updateGradeConversion(this)"${maxVal}>
+                                        <div class="grade-conversion" id="conv-${subjectId}-tetramester">
+                                            <span class="conv-arrow">→</span>
+                                            <span class="conv-value">-</span>
+                                            <span>/20</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -2481,10 +2582,18 @@ function showReports() {
                             <!-- Τελικός Βαθμός Έτους -->
                             <div class="year-final-section">
                                 <span class="year-final-label">ΤΕΛΙΚΟΣ ΒΑΘΜΟΣ ΕΤΟΥΣ</span>
-                                <input type="number" class="final-grade-input large card-final-input" 
-                                       id="final-${subjectId}-year"
-                                       value="${savedYear}"
-                                       min="0" max="20" step="0.5" placeholder="—"${maxVal}>
+                                <div class="grade-input-wrapper">
+                                    <input type="number" class="final-grade-input large card-final-input" 
+                                           id="final-${subjectId}-year"
+                                           value="${savedYear}"
+                                           min="0" max="20" step="0.5" placeholder="—"
+                                           oninput="updateGradeConversion(this)"${maxVal}>
+                                    <div class="grade-conversion" id="conv-${subjectId}-year">
+                                        <span class="conv-arrow">→</span>
+                                        <span class="conv-value">-</span>
+                                        <span>/20</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     `;
