@@ -3643,19 +3643,27 @@ function createStudentReport() {
             // For tetramester_a or tetramester_b - Portrait format
             const period = periodDates[periodSelect];
             
-            // Helper to compare dates (ignoring time/timezone)
-            const dateOnly = (d) => {
-                const dt = new Date(d);
-                return new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
-            };
-            
             // Filter grades by period
-            const filterByPeriod = (grades) => grades.filter(g => {
-                const gDate = dateOnly(g.date);
-                const startDate = dateOnly(period.start);
-                const endDate = dateOnly(period.end);
-                return gDate >= startDate && gDate <= endDate && isRegularGrade(g);
-            });
+            const filterByPeriod = (grades) => {
+                console.log('=== Filter by period ===');
+                console.log('Period:', periodSelect, 'Start:', period.start, 'End:', period.end);
+                console.log('Input grades:', grades.length);
+                
+                const filtered = grades.filter(g => {
+                    const gDate = dateOnly(g.date);
+                    const startDate = dateOnly(period.start);
+                    const endDate = dateOnly(period.end);
+                    const inRange = gDate >= startDate && gDate <= endDate;
+                    const isReg = isRegularGrade(g);
+                    
+                    console.log(`Grade: ${g.subject} ${g.category} ${g.date} -> gDate=${gDate.toISOString()} inRange=${inRange} isReg=${isReg}`);
+                    
+                    return inRange && isReg;
+                });
+                
+                console.log('Filtered grades:', filtered.length);
+                return filtered;
+            };
 
             const subjectData = subjects.map(subject => {
                 const subjectGrades = studentGrades.filter(g => g.subject === subject);
