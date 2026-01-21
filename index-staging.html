@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#2E7D32">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Βαθμολόγιο">
-    <title>Βαθμολόγιο - STAGING</title>
+    <title>Βαθμολόγιο - Μπίζου</title>
     
     <!-- PWA Manifest - Inline -->
     <link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoizpLOsc64zrzOv867z4zOs865zr8gLSDOnM+Azq/Ots6/z4UiLCJzaG9ydF9uYW1lIjoizpLOsc64zrzOv867z4zOs865zr8iLCJkZXNjcmlwdGlvbiI6Is6Vz4bOsc+BzrzOv86zzq4gzrrOsc+EzrHPh8+Oz4HOuc+DzrfPgiDOus6xzrkgzrHOvc6xz4bOv8+Bz47OvSDOss6xzrjOvM6/zrvOv86zzq/Osc+CLiIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI0ZBRkFGQyIsInRoZW1lX2NvbG9yIjoiIzVCMkM4MyIsImljb25zIjpbXX0=">
@@ -1835,6 +1835,7 @@
 
         // ============== SCORE HANDLERS ==============
         let currentScale = 20; // Default scale
+        let cardScale = 20; // Scale for student card final grades
 
         function setScale(scale) {
             currentScale = scale;
@@ -1846,6 +1847,26 @@
             // Show/hide score sections
             document.getElementById('score-section-20').style.display = scale === 20 ? 'block' : 'none';
             document.getElementById('score-section-100').style.display = scale === 100 ? 'block' : 'none';
+        }
+
+        function setCardScale(scale) {
+            cardScale = scale;
+            
+            // Update buttons
+            const btn20 = document.getElementById('card-scale-20-btn');
+            const btn100 = document.getElementById('card-scale-100-btn');
+            if (btn20) btn20.classList.toggle('active', scale === 20);
+            if (btn100) btn100.classList.toggle('active', scale === 100);
+            
+            // Update all final grade inputs in the card
+            document.querySelectorAll('.card-final-input').forEach(input => {
+                input.max = scale;
+                input.step = scale === 100 ? '1' : '0.5';
+                // Update placeholder to show max
+                input.placeholder = scale === 100 ? '0-100' : '—';
+            });
+            
+            showToast(`Κλίμακα: 0-${scale}`);
         }
 
         function updateScore20(value) {
@@ -2330,9 +2351,12 @@ function showReports() {
             }
 
             const student = students.find(s => s.regNo === studentRegNo && s.classId === classId);
-            const className = classes.find(c => c.id === classId)?.name;
+            const className = classes.find(c => c.id === classId)?.name || '';
             const studentGrades = grades.filter(g => g.studentRegNo === studentRegNo && g.classId === classId);
 
+            // Check if class is Lyceum for scale toggle
+            const isLyceum = className.toUpperCase().includes('ΛΥΚΕΙ');
+            
             // Final grades key
             const finalKey = `${classId}_${studentRegNo}`;
 
@@ -2341,6 +2365,22 @@ function showReports() {
                     <div class="student-card-name">${student.name}</div>
                     <div class="student-card-class">${className} • Σχολικό Έτος 2025-2026</div>
                 </div>
+
+                ${isLyceum ? `
+                <div class="select-group" style="margin: 15px 0;">
+                    <label class="select-label">Κλίμακα Βαθμολόγησης Τελικών</label>
+                    <div class="scale-toggle">
+                        <button class="scale-btn active" id="card-scale-20-btn" onclick="setCardScale(20)">
+                            <span class="scale-number">0-20</span>
+                            <span class="scale-desc">Εικοσαβάθμια</span>
+                        </button>
+                        <button class="scale-btn" id="card-scale-100-btn" onclick="setCardScale(100)">
+                            <span class="scale-number">0-100</span>
+                            <span class="scale-desc">Εκατονταβάθμια</span>
+                        </button>
+                    </div>
+                </div>
+                ` : ''}
 
                 ${subjects.map(subject => {
                     const subjectGrades = studentGrades.filter(g => g.subject === subject);
@@ -2376,6 +2416,9 @@ function showReports() {
                     const savedYear = fk[`${subject}_year`] || finalGrades[`${finalKey}_${subject}_year`] || '';
 
                     const subjectId = subject.replace(/\s/g, '_');
+                    
+                    // Max value based on scale (default 20)
+                    const maxVal = isLyceum ? '" data-max-20="20" data-max-100="100"' : '';
 
                     return `
                         <div class="subject-card">
@@ -2398,10 +2441,10 @@ function showReports() {
                                 </div>
                                 <div class="period-final">
                                     <span>Βαθμός Τριμήνου:</span>
-                                    <input type="number" class="final-grade-input small" 
+                                    <input type="number" class="final-grade-input small card-final-input" 
                                            id="final-${subjectId}-trimester"
                                            value="${savedTrimester}"
-                                           min="0" max="20" step="0.5" placeholder="—">
+                                           min="0" max="20" step="0.5" placeholder="—"${maxVal}>
                                 </div>
                             </div>
 
@@ -2420,10 +2463,10 @@ function showReports() {
                                 </div>
                                 <div class="period-final">
                                     <span>Βαθμός Τετραμήνου:</span>
-                                    <input type="number" class="final-grade-input small" 
+                                    <input type="number" class="final-grade-input small card-final-input" 
                                            id="final-${subjectId}-tetramester"
                                            value="${savedTetramester}"
-                                           min="0" max="20" step="0.5" placeholder="—">
+                                           min="0" max="20" step="0.5" placeholder="—"${maxVal}>
                                 </div>
                             </div>
 
@@ -2438,10 +2481,10 @@ function showReports() {
                             <!-- Τελικός Βαθμός Έτους -->
                             <div class="year-final-section">
                                 <span class="year-final-label">ΤΕΛΙΚΟΣ ΒΑΘΜΟΣ ΕΤΟΥΣ</span>
-                                <input type="number" class="final-grade-input large" 
+                                <input type="number" class="final-grade-input large card-final-input" 
                                        id="final-${subjectId}-year"
                                        value="${savedYear}"
-                                       min="0" max="20" step="0.5" placeholder="—">
+                                       min="0" max="20" step="0.5" placeholder="—"${maxVal}>
                             </div>
                         </div>
                     `;
@@ -2489,6 +2532,9 @@ function saveFinalGrades() {
             const className = cls ? cls.name : classId;
             const studentName = stu ? stu.name : studentRegNo;
             
+            // Use cardScale for final grades (default 20)
+            const scaleToUse = cardScale || 20;
+            
             const savedAt = new Date().toISOString();
 
             let wroteAny = false;
@@ -2519,7 +2565,7 @@ function saveFinalGrades() {
                                 id: gid, classId, className, studentRegNo, studentName,
                                 subjectId: subjectName, subject: subjectName,
                                 categoryId: 'final_trimester', category: 'Α΄ Τρίμηνο',
-                                score: score, scale: 20, notes: 'Τελικός',
+                                score: score, scale: scaleToUse, notes: 'Τελικός',
                                 date: '2025-12-31', savedAt: savedAt, synced: false, hideFromHistory: true
                             };
                             const idx = grades.findIndex(g => String(g.id) === String(gid));
@@ -2545,7 +2591,7 @@ function saveFinalGrades() {
                                 id: gid, classId, className, studentRegNo, studentName,
                                 subjectId: subjectName, subject: subjectName,
                                 categoryId: 'final_tetramester', category: 'Β΄ Τετράμηνο',
-                                score: score, scale: 20, notes: 'Τελικός',
+                                score: score, scale: scaleToUse, notes: 'Τελικός',
                                 date: '2026-05-31', savedAt: savedAt, synced: false, hideFromHistory: true
                             };
                             const idx = grades.findIndex(g => String(g.id) === String(gid));
@@ -2571,7 +2617,7 @@ function saveFinalGrades() {
                                 id: gid, classId, className, studentRegNo, studentName,
                                 subjectId: subjectName, subject: subjectName,
                                 categoryId: 'final_year', category: 'Τελικός Έτους',
-                                score: score, scale: 20, notes: 'Τελικός',
+                                score: score, scale: scaleToUse, notes: 'Τελικός',
                                 date: new Date().toISOString().slice(0,10), savedAt: savedAt, synced: false, hideFromHistory: true
                             };
                             const idx = grades.findIndex(g => String(g.id) === String(gid));
