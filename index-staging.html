@@ -1641,6 +1641,12 @@
             return true;
         }
         
+        // Global helper: Compare dates ignoring time/timezone
+        function dateOnly(d) {
+            const dt = new Date(d);
+            return new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
+        }
+        
         const commentPhrases = [
             { id: 1, category: "Θετικό", text: "Πολύ καλή προσπάθεια σήμερα." },
             { id: 2, category: "Θετικό", text: "Σαφής δομή και σωστή τεκμηρίωση." },
@@ -2497,13 +2503,13 @@ function showReports() {
                     
                     // Filter by period - ONLY regular grades (exclude finals)
                     const tetramester_aGrades = subjectGrades.filter(g => {
-                        const gDate = new Date(g.date);
-                        return gDate >= new Date('2025-09-11') && gDate <= new Date('2026-01-20') && isRegularGrade(g);
+                        const gDate = dateOnly(g.date);
+                        return gDate >= dateOnly('2025-09-11') && gDate <= dateOnly('2026-01-20') && isRegularGrade(g);
                     });
                     
                     const tetramesterBGrades = subjectGrades.filter(g => {
-                        const gDate = new Date(g.date);
-                        return gDate >= new Date('2026-01-21') && gDate <= new Date('2026-05-31') && isRegularGrade(g);
+                        const gDate = dateOnly(g.date);
+                        return gDate >= dateOnly('2026-01-21') && gDate <= dateOnly('2026-05-31') && isRegularGrade(g);
                     });
 
                     const examGrades = subjectGrades.filter(g => g.category === 'ΕΞΕΤΑΣΕΙΣ');
@@ -3098,14 +3104,14 @@ const student = students.find(s => s.regNo === studentRegNo && s.classId === cla
                 
                 // Trimester grades by category - ONLY regular grades
                 const tetramester_aGrades = subjectGrades.filter(g => {
-                    const gDate = new Date(g.date);
-                    return gDate >= new Date('2025-09-11') && gDate <= new Date('2026-01-20') && isRegularGrade(g);
+                    const gDate = dateOnly(g.date);
+                    return gDate >= dateOnly('2025-09-11') && gDate <= dateOnly('2026-01-20') && isRegularGrade(g);
                 });
                 
                 // Tetramester grades by category - ONLY regular grades
                 const tetramesterBGrades = subjectGrades.filter(g => {
-                    const gDate = new Date(g.date);
-                    return gDate >= new Date('2026-01-21') && gDate <= new Date('2026-05-31') && isRegularGrade(g);
+                    const gDate = dateOnly(g.date);
+                    return gDate >= dateOnly('2026-01-21') && gDate <= dateOnly('2026-05-31') && isRegularGrade(g);
                 });
 
                 // Exam grades
@@ -3138,12 +3144,12 @@ const student = students.find(s => s.regNo === studentRegNo && s.classId === cla
 
             // Overall averages - ONLY regular grades
             const allTrimester = studentGrades.filter(g => {
-                const gDate = new Date(g.date);
-                return gDate >= new Date('2025-09-11') && gDate <= new Date('2026-01-20') && isRegularGrade(g);
+                const gDate = dateOnly(g.date);
+                return gDate >= dateOnly('2025-09-11') && gDate <= dateOnly('2026-01-20') && isRegularGrade(g);
             });
             const allTetramester = studentGrades.filter(g => {
-                const gDate = new Date(g.date);
-                return gDate >= new Date('2026-01-21') && gDate <= new Date('2026-05-31') && isRegularGrade(g);
+                const gDate = dateOnly(g.date);
+                return gDate >= dateOnly('2026-01-21') && gDate <= dateOnly('2026-05-31') && isRegularGrade(g);
             });
 
             const overallTrimesterAvg = calcAvg(allTrimester);
@@ -3637,10 +3643,18 @@ function createStudentReport() {
             // For tetramester_a or tetramester_b - Portrait format
             const period = periodDates[periodSelect];
             
+            // Helper to compare dates (ignoring time/timezone)
+            const dateOnly = (d) => {
+                const dt = new Date(d);
+                return new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
+            };
+            
             // Filter grades by period
             const filterByPeriod = (grades) => grades.filter(g => {
-                const gDate = new Date(g.date);
-                return gDate >= new Date(period.start) && gDate <= new Date(period.end) && isRegularGrade(g);
+                const gDate = dateOnly(g.date);
+                const startDate = dateOnly(period.start);
+                const endDate = dateOnly(period.end);
+                return gDate >= startDate && gDate <= endDate && isRegularGrade(g);
             });
 
             const subjectData = subjects.map(subject => {
@@ -3829,27 +3843,33 @@ function createStudentReport() {
         // Landscape format for full year (both periods side by side)
         function createStudentReportYear(student, className, studentGrades, allClassGrades, calcAvg) {
             
+            // Helper to compare dates (ignoring time/timezone)
+            const dateOnly = (d) => {
+                const dt = new Date(d);
+                return new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
+            };
+            
             const subjectData = subjects.map(subject => {
                 const subjectGrades_s = studentGrades.filter(g => g.subject === subject);
                 const classSubjectGrades = allClassGrades.filter(g => g.subject === subject);
                 
                 // Separate by period
                 const tetramester_aGrades = subjectGrades_s.filter(g => {
-                    const gDate = new Date(g.date);
-                    return gDate >= new Date('2025-09-11') && gDate <= new Date('2026-01-20') && isRegularGrade(g);
+                    const gDate = dateOnly(g.date);
+                    return gDate >= dateOnly('2025-09-11') && gDate <= dateOnly('2026-01-20') && isRegularGrade(g);
                 });
                 const tetramesterBGrades = subjectGrades_s.filter(g => {
-                    const gDate = new Date(g.date);
-                    return gDate >= new Date('2026-01-21') && gDate <= new Date('2026-05-31') && isRegularGrade(g);
+                    const gDate = dateOnly(g.date);
+                    return gDate >= dateOnly('2026-01-21') && gDate <= dateOnly('2026-05-31') && isRegularGrade(g);
                 });
                 
                 const classTrimesterGrades = classSubjectGrades.filter(g => {
-                    const gDate = new Date(g.date);
-                    return gDate >= new Date('2025-09-11') && gDate <= new Date('2026-01-20') && isRegularGrade(g);
+                    const gDate = dateOnly(g.date);
+                    return gDate >= dateOnly('2025-09-11') && gDate <= dateOnly('2026-01-20') && isRegularGrade(g);
                 });
                 const classTetramesterGrades = classSubjectGrades.filter(g => {
-                    const gDate = new Date(g.date);
-                    return gDate >= new Date('2026-01-21') && gDate <= new Date('2026-05-31') && isRegularGrade(g);
+                    const gDate = dateOnly(g.date);
+                    return gDate >= dateOnly('2026-01-21') && gDate <= dateOnly('2026-05-31') && isRegularGrade(g);
                 });
                 
                 const getGradeDetails = (grades) => grades.map(g => ({
@@ -3885,12 +3905,12 @@ function createStudentReport() {
 
             // Overall averages
             const triGrades = studentGrades.filter(g => {
-                const gDate = new Date(g.date);
-                return gDate >= new Date('2025-09-11') && gDate <= new Date('2026-01-20') && isRegularGrade(g);
+                const gDate = dateOnly(g.date);
+                return gDate >= dateOnly('2025-09-11') && gDate <= dateOnly('2026-01-20') && isRegularGrade(g);
             });
             const tetGrades = studentGrades.filter(g => {
-                const gDate = new Date(g.date);
-                return gDate >= new Date('2026-01-21') && gDate <= new Date('2026-05-31') && isRegularGrade(g);
+                const gDate = dateOnly(g.date);
+                return gDate >= dateOnly('2026-01-21') && gDate <= dateOnly('2026-05-31') && isRegularGrade(g);
             });
             
             const overallTriAvg = calcAvg(triGrades);
@@ -4091,13 +4111,13 @@ function createStudentReport() {
 
             // Calculate CLASS averages (Μ.Ο. Τμήματος) for this subject - ONLY regular grades
             const classTrimesterGrades = allClassGrades.filter(g => {
-                const gDate = new Date(g.date);
-                return gDate >= new Date('2025-09-11') && gDate <= new Date('2026-01-20') && 
+                const gDate = dateOnly(g.date);
+                return gDate >= dateOnly('2025-09-11') && gDate <= dateOnly('2026-01-20') && 
                        isRegularGrade(g);
             });
             const classTetramesterGrades = allClassGrades.filter(g => {
-                const gDate = new Date(g.date);
-                return gDate >= new Date('2026-01-21') && gDate <= new Date('2026-05-31') && 
+                const gDate = dateOnly(g.date);
+                return gDate >= dateOnly('2026-01-21') && gDate <= dateOnly('2026-05-31') && 
                        isRegularGrade(g);
             });
 
@@ -4114,15 +4134,15 @@ function createStudentReport() {
                 
                 // Μ.Ο.Μ. Τετραμήνου - μέσος όρος μαθητή από κανονικές κατηγορίες (ΔΙΑΓΩΝΙΣΜΑ, ΤΕΣΤ κλπ)
                 const tetramester_aGrades = studentGrades.filter(g => {
-                    const gDate = new Date(g.date);
-                    return gDate >= new Date('2025-09-11') && gDate <= new Date('2026-01-20') && 
+                    const gDate = dateOnly(g.date);
+                    return gDate >= dateOnly('2025-09-11') && gDate <= dateOnly('2026-01-20') && 
                            isRegularGrade(g);
                 });
                 
                 // Μ.Ο.Μ. Τετραμήνου
                 const tetramesterBGrades = studentGrades.filter(g => {
-                    const gDate = new Date(g.date);
-                    return gDate >= new Date('2026-01-21') && gDate <= new Date('2026-05-31') && 
+                    const gDate = dateOnly(g.date);
+                    return gDate >= dateOnly('2026-01-21') && gDate <= dateOnly('2026-05-31') && 
                            isRegularGrade(g);
                 });
                 
@@ -4691,7 +4711,7 @@ async function flushGoogleSyncQueue() {
             // Filter grades by period date range
             const periodDates = periods.find(p => p.id === period);
             const periodGrades = reportGrades.filter(g => {
-                const gDate = new Date(g.date);
+                const gDate = dateOnly(g.date);
                 return gDate >= new Date(periodDates.start) && gDate <= new Date(periodDates.end);
             });
 
