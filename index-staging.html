@@ -2860,6 +2860,16 @@ function saveFinalGrades() {
                             <span class="select-arrow">▼</span>
                         </div>
                     </div>
+                    <div class="select-group">
+                        <label class="select-label">Μάθημα</label>
+                        <div class="select-wrapper">
+                            <select class="custom-select" id="report-class-subject">
+                                <option value="">Επιλέξτε μάθημα...</option>
+                                ${subjects.map(s => `<option value="${s}">${s}</option>`).join('')}
+                            </select>
+                            <span class="select-arrow">▼</span>
+                        </div>
+                    </div>
                     <button class="submit-btn" onclick="createClassReport()">
                         <span>📊</span>
                         <span>Δημιουργία PDF</span>
@@ -3764,88 +3774,98 @@ const student = students.find(s => s.regNo === studentRegNo && s.classId === cla
 
         function createClassReport() {
             const classId = document.getElementById('report-class-only').value;
+            const selectedSubject = document.getElementById('report-class-subject').value;
+            
             if (!classId) {
                 showToast('Επιλέξτε τάξη');
                 return;
             }
+            if (!selectedSubject) {
+                showToast('Επιλέξτε μάθημα');
+                return;
+            }
 
-            
             const reportGrades = getGradesForReports();
-const className = classes.find(c => c.id === classId)?.name;
+            const className = classes.find(c => c.id === classId)?.name;
             const classStudents = students
                 .filter(s => s.classId === classId)
                 .sort((a, b) => a.name.localeCompare(b.name, 'el'));
             
-            const allClassGrades = reportGrades.filter(g => g.classId === classId);
+            // Filter grades for this class AND this subject only
+            const allClassGrades = reportGrades.filter(g => 
+                g.classId === classId && 
+                g.subject === selectedSubject
+            );
 
             const calcAvg = (arr) => {
                 if (arr.length === 0) return '-';
                 const normalized = arr.map(g => g.scale === 100 ? g.score / 5 : g.score);
                 return (normalized.reduce((a, b) => a + b, 0) / normalized.length).toFixed(1);
             };
+            
+            // Filter out final grades from averages (only regular categories)
+            const regularCategories = categories.filter(c => 
+                c !== 'ΕΞΕΤΑΣΕΙΣ' && 
+                !c.includes('Τρίμηνο') && 
+                !c.includes('Τετράμηνο') && 
+                !c.includes('Έτους')
+            );
 
-            // Calculate CLASS averages (Μ.Ο. Τμήματος)
+            // Calculate CLASS averages (Μ.Ο. Τμήματος) for this subject
             const classTrimesterGrades = allClassGrades.filter(g => {
                 const gDate = new Date(g.date);
-                return gDate >= new Date('2025-09-01') && gDate <= new Date('2025-12-31') && g.category !== 'ΕΞΕΤΑΣΕΙΣ';
+                return gDate >= new Date('2025-09-01') && gDate <= new Date('2025-12-31') && 
+                       regularCategories.includes(g.category);
             });
             const classTetramesterGrades = allClassGrades.filter(g => {
                 const gDate = new Date(g.date);
-                return gDate >= new Date('2026-01-01') && gDate <= new Date('2026-05-31') && g.category !== 'ΕΞΕΤΑΣΕΙΣ';
+                return gDate >= new Date('2026-01-01') && gDate <= new Date('2026-05-31') && 
+                       regularCategories.includes(g.category);
             });
-            const classExamGrades = allClassGrades.filter(g => g.category === 'ΕΞΕΤΑΣΕΙΣ');
 
             const classTrimesterAvg = calcAvg(classTrimesterGrades);
             const classTetramesterAvg = calcAvg(classTetramesterGrades);
-            const classExamAvg = calcAvg(classExamGrades);
 
-            // Calculate stats for each student by period
+            // Calculate stats for each student for the selected subject
             const studentStats = classStudents.map(student => {
-                const studentGrades = reportGrades.filter(g => g.studentRegNo === student.regNo && g.classId === classId);
-                const finalKey = `${classId}_${student.regNo}`;
+                const studentGrades = reportGrades.filter(g => 
+                    g.studentRegNo === student.regNo && 
+                    g.classId === classId &&
+                    g.subject === selectedSubject
+                );
                 
+                // Μ.Ο.Μ. Τριμήνου - μέσος όρος μαθητή από κανονικές κατηγορίες (ΔΙΑΓΩΝΙΣΜΑ, ΤΕΣΤ κλπ)
                 const trimesterGrades = studentGrades.filter(g => {
                     const gDate = new Date(g.date);
-                    return gDate >= new Date('2025-09-01') && gDate <= new Date('2025-12-31') && g.category !== 'ΕΞΕΤΑΣΕΙΣ';
+                    return gDate >= new Date('2025-09-01') && gDate <= new Date('2025-12-31') && 
+                           regularCategories.includes(g.category);
                 });
+                
+                // Μ.Ο.Μ. Τετραμήνου
                 const tetramesterGrades = studentGrades.filter(g => {
                     const gDate = new Date(g.date);
-                    return gDate >= new Date('2026-01-01') && gDate <= new Date('2026-05-31') && g.category !== 'ΕΞΕΤΑΣΕΙΣ';
+                    return gDate >= new Date('2026-01-01') && gDate <= new Date('2026-05-31') && 
+                           regularCategories.includes(g.category);
                 });
+                
+                // ΕΞΕΤΑΣΕΙΣ - από κατηγορία ΕΞΕΤΑΣΕΙΣ (τελευταίος βαθμός)
                 const examGrades = studentGrades.filter(g => g.category === 'ΕΞΕΤΑΣΕΙΣ');
+                const examScore = examGrades.length > 0 ? examGrades[examGrades.length - 1].score : '-';
 
-                // Get manual final grades (average across all subjects)
-                let trimesterFinal = '-';
-                let tetramesterFinal = '-';
-                let yearFinal = '-';
-                
-                const fg = finalGrades[finalKey] || {};
-                const trimesterFinals = subjects.map(s => parseFloat(fg[`${s}_trimester`])).filter(v => !isNaN(v));
-                const tetramesterFinals = subjects.map(s => parseFloat(fg[`${s}_tetramester`])).filter(v => !isNaN(v));
-                const yearFinals = subjects.map(s => parseFloat(fg[`${s}_year`])).filter(v => !isNaN(v));
-                
-                if (trimesterFinals.length > 0) {
-                    trimesterFinal = (trimesterFinals.reduce((a, b) => a + b, 0) / trimesterFinals.length).toFixed(1);
-                }
-                if (tetramesterFinals.length > 0) {
-                    tetramesterFinal = (tetramesterFinals.reduce((a, b) => a + b, 0) / tetramesterFinals.length).toFixed(1);
-                }
-                if (yearFinals.length > 0) {
-                    yearFinal = (yearFinals.reduce((a, b) => a + b, 0) / yearFinals.length).toFixed(1);
-                }
-
-                // Exam average
-                const examAvg = calcAvg(examGrades);
+                // Τελικοί βαθμοί - από Καρτέλα (category: Α΄ Τρίμηνο, Β΄ Τετράμηνο, Τελικός Έτους)
+                const trimesterFinalGrade = studentGrades.find(g => g.category === 'Α΄ Τρίμηνο');
+                const tetramesterFinalGrade = studentGrades.find(g => g.category === 'Β΄ Τετράμηνο');
+                const yearFinalGrade = studentGrades.find(g => g.category === 'Τελικός Έτους');
 
                 return {
                     name: student.name,
                     regNo: student.regNo,
                     trimesterAvg: calcAvg(trimesterGrades),
-                    trimesterFinal,
+                    trimesterFinal: trimesterFinalGrade ? trimesterFinalGrade.score : '-',
                     tetramesterAvg: calcAvg(tetramesterGrades),
-                    tetramesterFinal,
-                    examAvg,
-                    yearFinal
+                    tetramesterFinal: tetramesterFinalGrade ? tetramesterFinalGrade.score : '-',
+                    examScore: examScore,
+                    yearFinal: yearFinalGrade ? yearFinalGrade.score : '-'
                 };
             });
 
@@ -3856,7 +3876,7 @@ const className = classes.find(c => c.id === classId)?.name;
                 <html>
                 <head>
                     <meta charset="UTF-8">
-                    <title>Κατάσταση Τάξης - ${className}</title>
+                    <title>Κατάσταση Τάξης - ${className} - ${selectedSubject}</title>
                     <style>
                         @page { size: A4 landscape; margin: 8mm; }
                         @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
@@ -3865,6 +3885,7 @@ const className = classes.find(c => c.id === classId)?.name;
                         .header { text-align: center; border-bottom: 3px solid #5B2C83; padding-bottom: 8px; margin-bottom: 12px; }
                         .header h1 { color: #5B2C83; font-size: 15px; margin-bottom: 4px; }
                         .header h2 { color: #666; font-size: 11px; font-weight: normal; }
+                        .header h3 { color: #5B2C83; font-size: 12px; margin-top: 4px; }
                         table { width: 100%; border-collapse: collapse; font-size: 8px; }
                         th { background: #5B2C83; color: white; padding: 6px 3px; text-align: center; font-weight: 600; }
                         th:first-child, th:nth-child(2) { text-align: left; }
@@ -3879,14 +3900,13 @@ const className = classes.find(c => c.id === classId)?.name;
                         .exam-col { background: #fff3cd !important; color: #856404 !important; font-weight: 600; }
                         .year-col { background: #5B2C83 !important; color: white !important; font-weight: 700; }
                         .footer { margin-top: 12px; text-align: center; font-size: 7px; color: #999; border-top: 1px solid #eee; padding-top: 8px; }
-                        .class-avg-row { background: #e8d5f2 !important; font-weight: 700; }
-                        .class-avg-row td { border-top: 2px solid #5B2C83; }
                     </style>
                 </head>
                 <body>
                     <div class="header">
                         <h1>ΜΟΥΣΙΚΟ ΣΧΟΛΕΙΟ ΛΕΥΚΑΔΑΣ</h1>
                         <h2>Κατάσταση Τάξης: ${className} - Σχολικό Έτος 2025-2026</h2>
+                        <h3>Μάθημα: ${selectedSubject}</h3>
                     </div>
 
                     <table>
@@ -3919,7 +3939,7 @@ const className = classes.find(c => c.id === classId)?.name;
                                     <td class="avg-col">${s.tetramesterAvg}</td>
                                     <td class="class-avg-col">${classTetramesterAvg}</td>
                                     <td class="final-col">${s.tetramesterFinal}</td>
-                                    <td class="exam-col">${s.examAvg}</td>
+                                    <td class="exam-col">${s.examScore}</td>
                                     <td class="year-col">${s.yearFinal}</td>
                                 </tr>
                             `).join('')}
