@@ -1389,14 +1389,14 @@
 
     <script>
         // ============== HYBRID OFFLINE→SYNC→CLEAR (mobile-safe) ==============
-        const APP_BUILD = '2026-01-19-finalreports1-staging';
+        const APP_BUILD = '2026-01-19-STAGING';
         const HYBRID_CLEAR_LOCAL_ON_FULL_SYNC = true;
         const LOCAL_GRADES_KEY = 'bizou_grades_staging';
         const LOCAL_SYNC_QUEUE_KEY = 'google_sync_queue_v1_staging';
 
         (function versionedWipe(){
             try {
-                const prev = localStorage.getItem('bizou_app_build_staging');
+                const prev = localStorage.getItem('bizou_app_build');
                 if (prev !== APP_BUILD) {
                     // New build detected: wipe local history + pending queue to avoid "ghost" entries
                     localStorage.removeItem(LOCAL_GRADES_KEY);
@@ -1412,7 +1412,7 @@
                             caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
                         }
                     } catch (e) {}
-                    localStorage.setItem('bizou_app_build_staging', APP_BUILD);
+                    localStorage.setItem('bizou_app_build', APP_BUILD);
                 }
             } catch(e) { /* ignore */ }
         })();
