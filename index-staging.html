@@ -1631,10 +1631,14 @@
         // Excludes: ΕΞΕΤΑΣΕΙΣ, Α΄ Τετράμηνο, Β΄ Τετράμηνο, Τελικός Έτους
         function isRegularGrade(g) {
             if (!g || !g.category) return false;
-            return g.category !== 'ΕΞΕΤΑΣΕΙΣ' && 
-                   !g.category.includes('Τρίμηνο') && 
-                   !g.category.includes('Τετράμηνο') && 
-                   !g.category.includes('Έτους');
+            const cat = g.category;
+            // Exclude final grade categories
+            if (cat === 'ΕΞΕΤΑΣΕΙΣ') return false;
+            if (cat === 'Α΄ Τετράμηνο' || cat === 'Α΄ Τρίμηνο') return false;
+            if (cat === 'Β΄ Τετράμηνο' || cat === 'Β΄ Τρίμηνο') return false;
+            if (cat === 'Τελικός Έτους') return false;
+            if (cat.includes('Έτους')) return false;
+            return true;
         }
         
         const commentPhrases = [
@@ -3612,16 +3616,6 @@ function createStudentReport() {
             const studentGrades = reportGrades.filter(g => g.studentRegNo === studentRegNo && g.classId === classId);
             const allClassGrades = reportGrades.filter(g => g.classId === classId);
             
-            console.log('=== DEBUG createStudentReport ===');
-            console.log('classId:', classId);
-            console.log('studentRegNo:', studentRegNo);
-            console.log('All reportGrades:', reportGrades.length);
-            console.log('First 3 grades:', reportGrades.slice(0, 3));
-            console.log('studentGrades filtered:', studentGrades.length);
-            if (studentGrades.length > 0) {
-                console.log('Sample studentGrade:', studentGrades[0]);
-            }
-            
             const calcAvg = (arr) => {
                 if (arr.length === 0) return '-';
                 const normalized = arr.map(g => g.scale === 100 ? g.score / 5 : g.score);
@@ -3642,18 +3636,11 @@ function createStudentReport() {
 
             // For tetramester_a or tetramester_b - Portrait format
             const period = periodDates[periodSelect];
-            console.log('Selected period:', periodSelect, period);
-            console.log('Student grades count:', studentGrades.length);
             
             // Filter grades by period
             const filterByPeriod = (grades) => grades.filter(g => {
                 const gDate = new Date(g.date);
-                const inRange = gDate >= new Date(period.start) && gDate <= new Date(period.end);
-                const isReg = isRegularGrade(g);
-                if (inRange && isReg) {
-                    console.log('Grade in period:', g.subject, g.category, g.date, g.score);
-                }
-                return inRange && isReg;
+                return gDate >= new Date(period.start) && gDate <= new Date(period.end) && isRegularGrade(g);
             });
 
             const subjectData = subjects.map(subject => {
