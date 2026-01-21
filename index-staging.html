@@ -3337,9 +3337,17 @@ function escapeHtml(value) {
 // Helper: DB-backed finals for reports (so reports keep working even if localStorage/history is cleared)
 function getLatestFinalFromDb(classId, studentRegNo, subject){
   try {
-    if (!Array.isArray(grades)) return null;
+    // Use sheetGrades if available, otherwise use local grades
+    const gradesSource = (sheetDataLoaded && sheetGrades.length > 0) ? sheetGrades : grades;
+    if (!Array.isArray(gradesSource)) return null;
     const sid = String(studentRegNo);
-    const rows = grades.filter(g => String(g.studentRegNo) === sid && g.classId === classId && g.subject === subject && g.category === 'ΤΕΛΙΚΟΣ');
+    // Search for "Τελικός Έτους" category
+    const rows = gradesSource.filter(g => 
+        String(g.studentRegNo) === sid && 
+        g.classId === classId && 
+        g.subject === subject && 
+        (g.category === 'Τελικός Έτους' || g.category === 'ΤΕΛΙΚΟΣ')
+    );
     if (!rows.length) return null;
     rows.sort((a,b) => new Date(a.date || 0) - new Date(b.date || 0));
     const last = rows[rows.length - 1];
@@ -3447,8 +3455,8 @@ function createStudentFinalReport() {
                         <tbody>
                             ${rows.map(r => `
                                 <tr>
-                                    <td>${r.sub}</td>
-                                    <td class="center grade-cell">${r.display}</td>
+                                    <td>${r.subject}</td>
+                                    <td class="center grade-cell">${r.val}</td>
                                     <td class="center">${r.num !== null && r.num >= 18 ? '⭐ Άριστα' : r.num !== null && r.num >= 15 ? '✓ Πολύ Καλά' : ''}</td>
                                 </tr>
                             `).join('')}
