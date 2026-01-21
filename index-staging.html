@@ -912,8 +912,9 @@
             gap: 10px;
         }
         
-        .grade-conversion {
-            display: none;
+        .grade-conversion,
+        .score-conversion {
+            display: flex;
             align-items: center;
             gap: 4px;
             padding: 6px 12px;
@@ -925,19 +926,22 @@
             color: #e65100;
             white-space: nowrap;
             box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
+            margin-top: 5px;
         }
         
-        .grade-conversion.visible {
-            display: flex;
+        .grade-conversion {
+            display: none;
         }
         
-        .grade-conversion .conv-arrow {
+        .grade-conversion .conv-arrow,
+        .score-conversion .conv-arrow {
             color: #ff9800;
             font-size: 14px;
             font-weight: bold;
         }
         
-        .grade-conversion .conv-value {
+        .grade-conversion .conv-value,
+        .score-conversion .conv-value {
             font-size: 16px;
             font-weight: 700;
             color: #e65100;
@@ -1972,6 +1976,12 @@
             document.querySelectorAll('#score-section-100 .quick-score-btn').forEach(btn => {
                 btn.classList.toggle('active', parseFloat(btn.textContent) === parseFloat(value));
             });
+            // Update conversion to scale 20
+            const convValue = document.getElementById('score-conv-value');
+            if (convValue) {
+                const converted = (parseFloat(value) / 5).toFixed(1);
+                convValue.textContent = converted;
+            }
         }
 
         function setScore100(value) {
