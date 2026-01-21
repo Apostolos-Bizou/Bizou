@@ -1553,7 +1553,6 @@
             { classId: "A2_LYK_2025_2026", regNo: "843", name: "ΚΡΗΤΙΚΟΣ ΣΠΥΡΙΔΩΝ" },
             { classId: "A2_LYK_2025_2026", regNo: "847", name: "ΜΙΤΙΛΗ ΑΝΑΣΤΑΣΙΑ" },
             { classId: "A2_LYK_2025_2026", regNo: "848", name: "ΜΠΑΛΑΪ ΝΙΚΟΛΑΟΣ-ΘΕΟΔΩΡΟΣ" },
-			{ classId: "A2_LYK_2025_2026", regNo: "000", name: "ΠΑΠΑΓΙΑΝΝΙΔΗΣ ΒΑΣΙΛΕΙΟΣ" },
             { classId: "A2_LYK_2025_2026", regNo: "849", name: "ΠΑΞΙΝΟΥ ΑΛΕΞΑΝΔΡΑ" },
             { classId: "A2_LYK_2025_2026", regNo: "850", name: "ΠΑΠΑΔΟΠΟΥΛΟΣ ΕΥΣΤΑΘΙΟΣ" },
             { classId: "A2_LYK_2025_2026", regNo: "851", name: "ΠΑΠΑΔΟΠΟΥΛΟΣ ΙΩΑΝΝΗΣ" },
@@ -4006,7 +4005,7 @@ const className = classes.find(c => c.id === classId)?.name;
         // ============== GOOGLE SHEETS SYNC ==============
         // NOTE: This implementation performs an invisible, non-blocking 'shadow sync' to Google Sheets
         // without changing the UI, reports, or existing storage flow.
-        const GOOGLE_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxEpND4yRGQHoYC9J-UzzjUXVQrsujllJgsvNARZmOJph2-otv-fssEX7TKLIOKpGJtmw/exec';
+        const GOOGLE_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxEpND4yRGQHoYC9J-UzzjUXVQrsuj1lJgsvNARZmOJph2-otv-fssEX7TKLIOKpGJtmw/exec';
         const GOOGLE_SYNC_QUEUE_KEY = 'google_sync_queue_v1';
         const GOOGLE_SYNC_TOKEN = 'tok_Dwhnci7Rx7kDgf24yVOLhE3YACHccNmd6Ejpb0e_5Mw';
 
@@ -4066,10 +4065,9 @@ async function flushGoogleSyncQueue() {
                 try {
                     await fetch(getGoogleEndpointUrl(), {
                         method: 'POST',
-                        // no-cors + NO custom headers => avoids CORS preflight (Apps Script cannot answer OPTIONS)
                         mode: 'no-cors',
-                        body: JSON.stringify(item),
-                        keepalive: true
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(item)
                     });
                     if (item && item.id) { markGradeSynced_(item.id); }
                     // no-cors: response is opaque; assume success if no exception
